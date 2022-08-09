@@ -9,8 +9,6 @@ export class SignInController {
   constructor (private useCase:ISignInUseCase) {}
 
   handle (req: HttpRequest<SignInRequestDTO>): HttpResponse {
-    if (!this.useCase.execute) { return HttpResponse.serverError(); }
-
     const { email, password } = req.body;
     const bodyEmpty = isBodyEmpty(req.body);
     if (bodyEmpty) { return HttpResponse.serverError(); }
@@ -19,9 +17,10 @@ export class SignInController {
 
     try {
       const response: SignInResponseDTO = this.useCase.execute(email, password);
+      if (!response.token) { return HttpResponse.notAuthorized(); }
       return HttpResponse.ok(response);
     } catch {
-      return HttpResponse.notAuthorized();
+      return HttpResponse.serverError();
     }
   }
 }
