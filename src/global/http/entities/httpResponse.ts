@@ -1,13 +1,16 @@
-import { BadRequestError } from '../errors/BadRequestError';
+import { BadRequestInvalidParam, BadRequestMissingParamError } from '../errors/BadRequestError';
 import { InternalServerError } from '../errors/InternalServerError';
 import { NotAuthorizedError } from '../errors/NotAuthorizedError';
 
+type BadRequestType = 'missing' | 'invalid'
 export class HttpResponse {
   readonly body: any;
-  static badRequest (param:string) {
+  static badRequest (param:string, type:BadRequestType = 'missing') {
     return {
       statusCode: 400,
-      body: new BadRequestError(param)
+      body: type === 'missing'
+        ? new BadRequestMissingParamError(param)
+        : new BadRequestInvalidParam(param)
     };
   }
 

@@ -64,7 +64,7 @@ describe('POST /signin', () => {
     const request = new HttpRequest(data);
     const response = await sut.handle(request);
 
-    expect(response).toEqual(HttpResponse.badRequest('password'));
+    expect(response).toEqual(HttpResponse.badRequest('password', 'missing'));
   });
   it('should return a error 500 if request body is empty', async () => {
     const { sut } = makeSut();
