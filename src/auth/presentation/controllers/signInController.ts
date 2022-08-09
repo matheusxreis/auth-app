@@ -8,7 +8,7 @@ import { SignInResponseDTO } from '../dtos/SignInResponseDTO';
 export class SignInController {
   constructor (private useCase:ISignInUseCase) {}
 
-  handle (req: HttpRequest<SignInRequestDTO>): HttpResponse {
+  async handle (req: HttpRequest<SignInRequestDTO>): Promise<HttpResponse> {
     const { email, password } = req.body;
     const bodyEmpty = isBodyEmpty(req.body);
     if (bodyEmpty) { return HttpResponse.serverError(); }
@@ -16,7 +16,7 @@ export class SignInController {
     if (!password) { return HttpResponse.badRequest('password'); }
 
     try {
-      const response: SignInResponseDTO = this.useCase.execute(email, password);
+      const response: SignInResponseDTO = await this.useCase.execute(email, password);
       if (!response.token) { return HttpResponse.notAuthorized(); }
       return HttpResponse.ok(response);
     } catch {
