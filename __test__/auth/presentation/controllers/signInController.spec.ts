@@ -1,84 +1,8 @@
 
 import { SignInRequestDTO } from '../../../../src/auth/presentation/dtos/SignInRequestDTO';
-
-class BadRequestError extends Error {
-  constructor (param:string) {
-    super(`Missing param: ${param}.`);
-    this.name = 'Bad Request: Missing Param';
-  }
-}
-
-class InternalServerError extends Error {
-  constructor () {
-    super('Internal server error.');
-    this.name = 'Internal Server Error';
-  }
-}
-
-class NotAuthorizedError extends Error {
-  constructor () {
-    super('Not authorized.');
-    this.name = 'Not Authorized Error';
-  }
-}
-export class HttpRequest<T=any> {
-  readonly body: T;
-  constructor (body:T) {
-    this.body = body;
-  }
-}
-export class HttpResponse {
-  static badRequest (param:string) {
-    return {
-      statusCode: 400,
-      body: new BadRequestError(param)
-    };
-  }
-
-  static serverError () {
-    return {
-      statusCode: 500,
-      body: new InternalServerError()
-    };
-  }
-
-  static ok () {
-    return {
-      statusCode: 200,
-      body: { message: 'OK' }
-    };
-  }
-
-  static created (b:any) {
-    return {
-      statusCode: 201,
-      body: b
-    };
-  }
-
-  static notAuthorized () {
-    return {
-      statusCode: 401,
-      body: new NotAuthorizedError()
-    };
-  }
-}
-
-export function isBodyEmpty (body:object) {
-  return JSON.stringify(body) === JSON.stringify({});
-}
-
-export class SignInController {
-  handle (req: HttpRequest<SignInRequestDTO>): HttpResponse {
-    const { email, password } = req.body;
-    const bodyEmpty = isBodyEmpty(req.body);
-    if (bodyEmpty) { return HttpResponse.serverError(); }
-    if (!email) { return HttpResponse.badRequest('email'); }
-    if (!password) { return HttpResponse.badRequest('password'); }
-
-    return HttpResponse.ok();
-  }
-}
+import { SignInController } from '../../../../src/auth/presentation/controllers/signInController';
+import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
+import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
 
 describe('POST /signin', () => {
   it('should return a response status 200 if all is ok', () => {
