@@ -3,6 +3,7 @@ import { InternalServerError } from '../errors/InternalServerError';
 import { NotAuthorizedError } from '../errors/NotAuthorizedError';
 
 export class HttpResponse {
+  readonly body: any;
   static badRequest (param:string) {
     return {
       statusCode: 400,
@@ -17,10 +18,10 @@ export class HttpResponse {
     };
   }
 
-  static ok () {
+  static ok (body?:object) {
     return {
       statusCode: 200,
-      body: { message: 'OK' }
+      body: body || { message: 'OK' }
     };
   }
 

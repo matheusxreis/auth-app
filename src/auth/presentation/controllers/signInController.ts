@@ -3,6 +3,7 @@ import { HttpRequest } from '../../../global/http/entities/httpRequest';
 import { HttpResponse } from '../../../global/http/entities/httpResponse';
 import { isBodyEmpty } from '../../../global/http/helpers/isBodyEmpty';
 import { SignInRequestDTO } from '../dtos/SignInRequestDTO';
+import { SignInResponseDTO } from '../dtos/SignInResponseDTO';
 
 export class SignInController {
   constructor (private useCase:ISignInUseCase) {}
@@ -17,8 +18,8 @@ export class SignInController {
     if (!password) { return HttpResponse.badRequest('password'); }
 
     try {
-      this.useCase.execute(email, password);
-      return HttpResponse.ok();
+      const response: SignInResponseDTO = this.useCase.execute(email, password);
+      return HttpResponse.ok(response);
     } catch {
       return HttpResponse.notAuthorized();
     }

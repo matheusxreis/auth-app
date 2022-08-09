@@ -34,6 +34,27 @@ describe('POST /signin', () => {
     expect(response).toEqual(HttpResponse.badRequest('email'));
   });
 
+  it('should return a signInResponseDTO if all is ok', () => {
+    const signInUseCase = {
+      execute: () => ({
+        user: { username: 'username', id: 'id' },
+        timestamp: 12334,
+        token: 'access_token_jwt'
+      })
+    };
+    const sut = new SignInController(signInUseCase);
+
+    const data = { email: 'email@teste.com.br', password: 'password' };
+    const request = new HttpRequest(data);
+    const response = sut.handle(request);
+
+    const responseBody = signInUseCase.execute();
+
+    expect(response).toEqual(HttpResponse.ok(responseBody));
+    expect(response).toHaveProperty('body');
+    expect(response.body).toEqual(responseBody);
+  });
+
   it('should return a error 400 if password is empty', () => {
     const { sut } = makeSut();
     const data = { email: 'email@test.com.br', password: '' };
