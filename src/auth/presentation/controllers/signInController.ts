@@ -1,4 +1,5 @@
 import { ISignInUseCase } from 'src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
+import { Validator } from '../../../global/utils/validator';
 import { HttpRequest } from '../../../global/http/entities/httpRequest';
 import { HttpResponse } from '../../../global/http/entities/httpResponse';
 import { isBodyEmpty } from '../../../global/http/helpers/isBodyEmpty';
@@ -14,6 +15,8 @@ export class SignInController {
     if (bodyEmpty) { return HttpResponse.serverError(); }
     if (!email) { return HttpResponse.badRequest('email'); }
     if (!password) { return HttpResponse.badRequest('password'); }
+
+    if (!Validator.isEmailValid(email)) { return HttpResponse.badRequest('email', 'invalid'); }
 
     try {
       const response: SignInResponseDTO = await this.useCase.execute(email, password);
