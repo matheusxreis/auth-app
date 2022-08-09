@@ -3,6 +3,7 @@ import { SignInRequestDTO } from '../../../../src/auth/presentation/dtos/SignInR
 import { SignInController } from '../../../../src/auth/presentation/controllers/signInController';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
+import { ISignInUseCase } from '../../../../src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
 
 // sut = system under test - the system which is being testing
 const makeSut = () => {
@@ -72,5 +73,17 @@ describe('POST /signin', () => {
     const response = sut.handle(request);
 
     expect(response).toEqual(HttpResponse.notAuthorized());
+  });
+
+  it('should return a error 500 if a use case inject is undefined', () => {
+    const undefinedUseCase = {} as ISignInUseCase;
+    const sut = new SignInController(undefinedUseCase);
+
+    const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
+    const request = new HttpRequest(data);
+
+    const response = sut.handle(request);
+
+    expect(response).toEqual(HttpResponse.serverError());
   });
 });

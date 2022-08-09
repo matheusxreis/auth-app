@@ -8,6 +8,8 @@ export class SignInController {
   constructor (private useCase:ISignInUseCase) {}
 
   handle (req: HttpRequest<SignInRequestDTO>): HttpResponse {
+    if (!this.useCase.execute) { return HttpResponse.serverError(); }
+
     const { email, password } = req.body;
     const bodyEmpty = isBodyEmpty(req.body);
     if (bodyEmpty) { return HttpResponse.serverError(); }
