@@ -62,10 +62,9 @@ describe('POST /signin', () => {
     const { sut } = makeSut();
     const data = { email: 'invalid_email', password: 'password' };
     const request = new HttpRequest(data);
-    const response = await sut.handle(request); 
+    const response = await sut.handle(request);
     expect(response).toEqual(HttpResponse.badRequest('email', 'invalid'));
-
-  })
+  });
   it('should return a error 400 if password is empty', async () => {
     const { sut } = makeSut();
     const data = { email: 'email@test.com.br', password: '' };
