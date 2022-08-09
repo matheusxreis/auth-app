@@ -22,27 +22,27 @@ const makeSut = () => {
 };
 
 describe('POST /signin', () => {
-  it('should return a response status 200 if all is ok', () => {
+  it('should return a response status 200 if all is ok', async () => {
     const { sut, signInUseCase } = makeSut();
     const data = { email: 'email@teste.com.br', password: 'password' };
     const request = new HttpRequest(data);
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     expect(response).toEqual(HttpResponse.ok(signInUseCase.execute()));
   });
-  it('should return a signInResponseDTO if all is ok', () => {
+  it('should return a signInResponseDTO if all is ok', async () => {
     const signInUseCase = {
-	  execute: () => ({
+      execute: () => ({
         user: { username: 'username', id: 'id' },
         timestamp: 12334,
         token: 'access_token_jwt'
-	  })
+      })
     };
     const sut = new SignInController(signInUseCase);
 
     const data = { email: 'email@teste.com.br', password: 'password' };
     const request = new HttpRequest(data);
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     const responseBody = signInUseCase.execute();
 
@@ -50,77 +50,77 @@ describe('POST /signin', () => {
     expect(response).toHaveProperty('body');
     expect(response.body).toEqual(responseBody);
   });
-  it('should return a error 400 if email is empty', () => {
+  it('should return a error 400 if email is empty', async () => {
     const { sut } = makeSut();
     const data = { email: '', password: 'password' };
     const request = new HttpRequest(data);
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     expect(response).toEqual(HttpResponse.badRequest('email'));
   });
-  it('should return a error 400 if password is empty', () => {
+  it('should return a error 400 if password is empty', async () => {
     const { sut } = makeSut();
     const data = { email: 'email@test.com.br', password: '' };
     const request = new HttpRequest(data);
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     expect(response).toEqual(HttpResponse.badRequest('password'));
   });
-  it('should return a error 500 if request body is empty', () => {
+  it('should return a error 500 if request body is empty', async () => {
     const { sut } = makeSut();
     const data = {} as SignInRequestDTO;
     const request = new HttpRequest(data);
 
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     expect(response).toEqual(HttpResponse.serverError());
   });
-  it('should return a error 401 in case of use case doesnt return a token', () => {
+  it('should return a error 401 in case of use case doesnt return a token', async () => {
     const signInUseCase = {
-	  execute: () => ({
+      execute: () => ({
         user: { username: '', id: '' },
         timestamp: 1,
         token: ''
-	  })
+      })
     };
     const sut = new SignInController(signInUseCase);
 
     const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     expect(response).toEqual(HttpResponse.notAuthorized());
   });
-  it('should call use case with correctly params', () => {
+  it('should call use case with correctly params', async () => {
     const signInUseCase = { execute: jest.fn() };
     const sut = new SignInController(signInUseCase);
 
     const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
-    sut.handle(request);
+    await sut.handle(request);
 
     expect(signInUseCase.execute).toBeCalledWith(data.email, data.password);
   });
-  it('should return a error 500 in case of use case throw a error', () => {
+  it('should return a error 500 in case of use case throw a error', async () => {
     const { errorSut: sut } = makeSut();
 
     const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     expect(response).toEqual(HttpResponse.serverError());
   });
-  it('should return a error 500 if a use case inject is undefined', () => {
+  it('should return a error 500 if a use case inject is undefined', async () => {
     const undefinedUseCase = {} as ISignInUseCase;
     const sut = new SignInController(undefinedUseCase);
 
     const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
-    const response = sut.handle(request);
+    const response = await sut.handle(request);
 
     expect(response).toEqual(HttpResponse.serverError());
   });
