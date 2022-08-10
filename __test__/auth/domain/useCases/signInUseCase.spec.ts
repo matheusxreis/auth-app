@@ -16,13 +16,17 @@ class SignInUseCase {
     if (!this.authRepository.signIn) {
       throw new InvalidInjectionError('AuthRepository must has a signIn method', 'SignInUseCase');
     }
-    await this.authRepository.signIn(email, password);
+    return await this.authRepository.signIn(email, password);
   }
 }
 
 const makeSut = () => {
   const repository = {
-    signIn: jest.fn(),
+    signIn: async () => await new Promise((resolve, reject) => resolve({
+      user: { username: 'username', id: 'id' },
+      timestamp: 12334,
+      token: 'access_token_jwt'
+    })).then(x => x),
     signUp: jest.fn()
   };
   const errorRepository = {} as IAuthRepository;
@@ -61,5 +65,23 @@ describe('SignInUseCase', () => {
     const { errorSut: sut } = makeSut();
 
     expect(async () => await sut.execute('valid@gmail.com', 'valid')).rejects.toThrow(new InvalidInjectionError('AuthRepository must has a signIn method', 'SignInUseCase'));
+  });
+  it('should return a signInResponseDTO if all is ok', async () => {
+    const { sut, repository } = makeSut();
+
+    const result = await sut.execute('valid.email@gmail.com', '123456789');
+
+    expect(result).toEqual(await repository.signIn());
+  });
+  it('should return a null if user not exist ok', async () => {
+    const repository = {
+      signIn: async () => await new Promise((resolve, reject) => resolve(null))
+        .then(x => x),
+      signUp: jest.fn()
+    };
+    const sut = new SignInUseCase(repository);
+    const result = await sut.execute('valid.email@gmail.com', '123456789');
+
+    expect(result).toEqual(null);
   });
 });
