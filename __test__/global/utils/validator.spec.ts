@@ -25,4 +25,24 @@ describe('Validator Class', () => {
 
     expect(isPasswordValid).toBe(false);
   });
+  it('should call method isEmailValid with correct email', () => {
+    let rightEmail = '';
+    const mockedEmailValidator = jest.spyOn(Validator, 'isEmailValid').mockImplementation((email) => { rightEmail = email; return true; });
+
+    const email = 'valid.email@gmail.com';
+    Validator.isEmailValid(email);
+
+    expect(rightEmail).toBe(email);
+    mockedEmailValidator.mockRestore();
+  });
+  it('should call method isPasswordValid with correct password', () => {
+    let rightPassword = '';
+    const mockedPasswordValidator = jest.spyOn(Validator, 'isPasswordValid').mockImplementation((pass) => { rightPassword = pass; return true; });
+
+    const password = '123456789@';
+    Validator.isPasswordValid(password);
+
+    expect(rightPassword).toBe(password);
+    mockedPasswordValidator.mockRestore();
+  });
 });
