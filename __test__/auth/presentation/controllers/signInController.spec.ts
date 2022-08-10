@@ -21,7 +21,7 @@ const makeSut = () => {
   return { sut, signInUseCase, errorSut };
 };
 
-describe('POST /signin', () => {
+describe('SignInController', () => {
   it('should return a response status 200 if all is ok', async () => {
     const { sut, signInUseCase } = makeSut();
     const data = { email: 'email@teste.com.br', password: 'password' };
