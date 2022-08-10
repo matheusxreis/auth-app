@@ -7,7 +7,7 @@
     "dev:watch": "ts-node-dev -r tsconfig-paths/register --inspect --respawn --ignore-watch node_modules ./src/index.ts",
     "start": "node ./dist/index.js",
     "build": "rm -rf ./dist && tsc",
-    "test": "jest"
+    "test": "jest --silent --verbose"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
