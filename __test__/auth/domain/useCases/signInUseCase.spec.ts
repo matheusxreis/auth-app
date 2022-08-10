@@ -16,15 +16,16 @@ const makeSut = () => {
 
   return { sut };
 };
+
 describe('SignInUseCase', () => {
   it('should throw a error if email is empty', async () => {
-    const { sut: sutPromise } = makeSut();
+    const { sut } = makeSut();
 
-    expect(sutPromise.execute('', 'password')).rejects.toThrow();
+    expect(async () => await sut.execute('', 'password')).rejects.toThrow(new EmptyParamFieldError('email'));
   });
   it('should throw a error if password is empty', async () => {
-    const { sut: sutPromise } = makeSut();
+    const { sut } = makeSut();
 
-    expect(sutPromise.execute('matheus.reis@gmail.com', '')).rejects.toThrow();
+    expect(async () => await sut.execute('matheus.reis@gmail.com', '')).rejects.toThrow(new EmptyParamFieldError('password'));
   });
 });
