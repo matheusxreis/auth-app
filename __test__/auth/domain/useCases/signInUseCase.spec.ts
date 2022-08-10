@@ -1,7 +1,12 @@
+
+import { EmptyParamFieldError } from '../../../../src/auth/domain/errors/EmptyParamFieldError';
 class SignInUseCase {
   async execute (email: string, password: string) {
-    if (!email || !password) {
-      throw new Error();
+    if (!email) {
+      throw new EmptyParamFieldError('email');
+    }
+    if (!password) {
+      throw new EmptyParamFieldError('password');
     }
   }
 }
