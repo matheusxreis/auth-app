@@ -1,17 +1,8 @@
 
 import { EmptyParamFieldError } from '../../../../src/auth/domain/errors/EmptyParamFieldError';
+import { InvalidInjectionError } from '../../../../src/auth/domain/errors/InvalidInjectionError';
 import { IAuthRepository } from '../../../../src/auth/domain/irepositories/authRepository';
-import { SignInResponseDTO } from '../../../../src/auth/presentation/dtos/SignInResponseDTO';
 
-// class AuthRepository implements IAuthRepository {
-//   signIn (email: string, password: string): Promise<SignInResponseDTO> {
-//     return null;
-//   };
-
-//   signUp (): void {
-//     throw new Error('Method not implemented.');
-//   }
-// }
 class SignInUseCase {
   constructor (private authRepository: IAuthRepository) {}
 
@@ -22,7 +13,9 @@ class SignInUseCase {
     if (!password) {
       throw new EmptyParamFieldError('password');
     }
-
+    if (!this.authRepository.signIn) {
+      throw new InvalidInjectionError('AuthRepository must has a signIn method', 'SignInUseCase');
+    }
     await this.authRepository.signIn(email, password);
   }
 }
@@ -32,9 +25,11 @@ const makeSut = () => {
     signIn: jest.fn(),
     signUp: jest.fn()
   };
+  const errorRepository = {} as IAuthRepository;
   const sut = new SignInUseCase(repository);
+  const errorSut = new SignInUseCase(errorRepository);
 
-  return { sut, repository };
+  return { sut, repository, errorSut };
 };
 
 describe('SignInUseCase', () => {
@@ -57,5 +52,10 @@ describe('SignInUseCase', () => {
     await sut.execute(email, password);
 
     expect(repository.signIn).toBeCalledWith(email, password);
+  });
+  it('should throw a error if receive a not valid repository throught constructor', async () => {
+    const { errorSut: sut } = makeSut();
+
+    expect(async () => await sut.execute('valid@gmail.com', 'valid')).rejects.toThrow(new InvalidInjectionError('AuthRepository must has a signIn method', 'SignInUseCase'));
   });
 });
