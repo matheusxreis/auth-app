@@ -1,6 +1,6 @@
-import { SignInResponseDTO } from '../../presentation/dtos/SignInResponseDTO';
+import { SignInResponseDTO } from '../../dtos/SignInResponseDTO';
 
 export interface IAuthRepository {
-    signIn(email:string, password:string):Promise<any>;
+    signIn(email:string, password:string):Promise<SignInResponseDTO|null>;
     signUp():void;
 }

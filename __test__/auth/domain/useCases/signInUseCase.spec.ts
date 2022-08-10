@@ -2,6 +2,7 @@
 import { EmptyParamFieldError } from '../../../../src/auth/domain/errors/EmptyParamFieldError';
 import { InvalidInjectionError } from '../../../../src/auth/domain/errors/InvalidInjectionError';
 import { IAuthRepository } from '../../../../src/auth/domain/irepositories/authRepository';
+import { SignInResponseDTO } from '../../../../src/auth/dtos/SignInResponseDTO';
 
 class SignInUseCase {
   constructor (private authRepository: IAuthRepository) {}
@@ -22,7 +23,7 @@ class SignInUseCase {
 
 const makeSut = () => {
   const repository = {
-    signIn: async () => await new Promise((resolve, reject) => resolve({
+    signIn: async () => await new Promise<SignInResponseDTO>((resolve, reject) => resolve({
       user: { username: 'username', id: 'id' },
       timestamp: 12334,
       token: 'access_token_jwt'
@@ -75,7 +76,7 @@ describe('SignInUseCase', () => {
   });
   it('should return a null if user not exist ok', async () => {
     const repository = {
-      signIn: async () => await new Promise((resolve, reject) => resolve(null))
+      signIn: async () => await new Promise<SignInResponseDTO|null>((resolve, reject) => resolve(null))
         .then(x => x),
       signUp: jest.fn()
     };

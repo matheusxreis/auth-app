@@ -8,5 +8,5 @@ timestamp: number,
 token: string
 };
 export interface ISignInUseCase {
-execute(email:string, password:string):Promise<ISignInUseCaseReturn>;
+execute(email:string, password:string):Promise<ISignInUseCaseReturn|null>;
 };
