@@ -3,16 +3,15 @@ import { SignInRequestDTO } from '../../../../src/auth/presentation/dtos/SignInR
 import { SignInController } from '../../../../src/auth/presentation/controllers/signInController';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
-import { ISignInUseCase } from '../../../../src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
-
+import { ISignInUseCase, ISignInUseCaseReturn } from '../../../../src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
 // sut = system under test - the system which is being testing
 const makeSut = () => {
   const signInUseCase = {
-    execute: () => ({
+    execute: async () => new Promise<ISignInUseCaseReturn>((resolve, reject) => resolve({
       user: { username: 'username', id: 'id' },
       timestamp: 12334,
       token: 'access_token_jwt'
-    })
+    })).then(x => x)
   };
   const failedSignInUseCase = { execute: () => { throw new Error(); } };
   const sut = new SignInController(signInUseCase);
@@ -28,15 +27,15 @@ describe('SignInController', () => {
     const request = new HttpRequest(data);
     const response = await sut.handle(request);
 
-    expect(response).toEqual(HttpResponse.ok(signInUseCase.execute()));
+    expect(response).toEqual(HttpResponse.ok(await signInUseCase.execute()));
   });
   it('should return a signInResponseDTO if all is ok', async () => {
     const signInUseCase = {
-      execute: () => ({
+      execute: async () => new Promise<ISignInUseCaseReturn>((resolve, reject) => resolve({
         user: { username: 'username', id: 'id' },
         timestamp: 12334,
         token: 'access_token_jwt'
-      })
+      })).then(x => x)
     };
     const sut = new SignInController(signInUseCase);
 
@@ -44,7 +43,7 @@ describe('SignInController', () => {
     const request = new HttpRequest(data);
     const response = await sut.handle(request);
 
-    const responseBody = signInUseCase.execute();
+    const responseBody = await signInUseCase.execute();
 
     expect(response).toEqual(HttpResponse.ok(responseBody));
     expect(response).toHaveProperty('body');
@@ -84,11 +83,11 @@ describe('SignInController', () => {
   });
   it('should return a error 401 in case of use case doesnt return a token', async () => {
     const signInUseCase = {
-      execute: () => ({
+      execute: async () => new Promise<ISignInUseCaseReturn>((resolve, reject) => resolve({
         user: { username: '', id: '' },
         timestamp: 1,
         token: ''
-      })
+      })).then(x => x)
     };
     const sut = new SignInController(signInUseCase);
 

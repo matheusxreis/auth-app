@@ -47,7 +47,11 @@ describe('SignInUseCase', () => {
     const email = 'email.correct@gmail.com';
     const password = '123*456*78';
 
-    const { sut, repository } = makeSut();
+    const repository = {
+      signIn: jest.fn(),
+      signUp: jest.fn()
+    };
+    const sut = new SignInUseCase(repository);
 
     await sut.execute(email, password);
 
