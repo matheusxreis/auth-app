@@ -1,19 +1,28 @@
-
 import { SignInRequestDTO } from '../../../../src/auth/dtos/SignInRequestDTO';
 import { SignInController } from '../../../../src/auth/presentation/controllers/signInController';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
-import { ISignInUseCase, ISignInUseCaseReturn } from '../../../../src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
+import {
+  ISignInUseCase,
+  ISignInUseCaseReturn
+} from '../../../../src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
 // sut = system under test - the system which is being testing
 const makeSut = () => {
   const signInUseCase = {
-    execute: async () => new Promise<ISignInUseCaseReturn>((resolve, reject) => resolve({
-      user: { username: 'username', id: 'id' },
-      timestamp: 12334,
-      token: 'access_token_jwt'
-    })).then(x => x)
+    execute: async () =>
+      new Promise<ISignInUseCaseReturn>((resolve, reject) =>
+        resolve({
+          user: { username: 'username', id: 'id' },
+          timestamp: 12334,
+          token: 'access_token_jwt'
+        })
+      ).then(x => x)
   };
-  const failedSignInUseCase = { execute: () => { throw new Error(); } };
+  const failedSignInUseCase = {
+    execute: () => {
+      throw new Error();
+    }
+  };
   const sut = new SignInController(signInUseCase);
   const errorSut = new SignInController(failedSignInUseCase);
 
@@ -27,15 +36,20 @@ describe('SignInController', () => {
     const request = new HttpRequest(data);
     const response = await sut.handle(request);
 
-    expect(response).toEqual(HttpResponse.ok(await signInUseCase.execute()));
+    expect(response).toEqual(
+      HttpResponse.ok(await signInUseCase.execute())
+    );
   });
   it('should return a signInResponseDTO if all is ok', async () => {
     const signInUseCase = {
-      execute: async () => new Promise<ISignInUseCaseReturn>((resolve, reject) => resolve({
-        user: { username: 'username', id: 'id' },
-        timestamp: 12334,
-        token: 'access_token_jwt'
-      })).then(x => x)
+      execute: async () =>
+        new Promise<ISignInUseCaseReturn>((resolve, reject) =>
+          resolve({
+            user: { username: 'username', id: 'id' },
+            timestamp: 12334,
+            token: 'access_token_jwt'
+          })
+        ).then(x => x)
     };
     const sut = new SignInController(signInUseCase);
 
@@ -45,7 +59,7 @@ describe('SignInController', () => {
 
     const responseBody = await signInUseCase.execute();
 
-    expect(response).toEqual(HttpResponse.ok(responseBody));
+    expect(response).toEqual(HttpResponse.ok({}));
     expect(response).toHaveProperty('body');
     expect(response.body).toEqual(responseBody);
   });
@@ -70,7 +84,9 @@ describe('SignInController', () => {
     const request = new HttpRequest(data);
     const response = await sut.handle(request);
 
-    expect(response).toEqual(HttpResponse.badRequest('password', 'missing'));
+    expect(response).toEqual(
+      HttpResponse.badRequest('password', 'missing')
+    );
   });
   it('should return a error 500 if request body is empty', async () => {
     const { sut } = makeSut();
@@ -83,15 +99,21 @@ describe('SignInController', () => {
   });
   it('should return a error 401 in case of use case doesnt return a token', async () => {
     const signInUseCase = {
-      execute: async () => new Promise<ISignInUseCaseReturn>((resolve, reject) => resolve({
-        user: { username: '', id: '' },
-        timestamp: 1,
-        token: ''
-      })).then(x => x)
+      execute: async () =>
+        new Promise<ISignInUseCaseReturn>((resolve, reject) =>
+          resolve({
+            user: { username: '', id: '' },
+            timestamp: 1,
+            token: ''
+          })
+        ).then(x => x)
     };
     const sut = new SignInController(signInUseCase);
 
-    const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
+    const data = {
+      email: 'email@teste.com.br',
+      password: '12345'
+    } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
     const response = await sut.handle(request);
@@ -102,7 +124,10 @@ describe('SignInController', () => {
     const signInUseCase = { execute: jest.fn() };
     const sut = new SignInController(signInUseCase);
 
-    const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
+    const data = {
+      email: 'email@teste.com.br',
+      password: '12345'
+    } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
     await sut.handle(request);
@@ -112,7 +137,10 @@ describe('SignInController', () => {
   it('should return a error 500 in case of use case throw a error', async () => {
     const { errorSut: sut } = makeSut();
 
-    const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
+    const data = {
+      email: 'email@teste.com.br',
+      password: '12345'
+    } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
     const response = await sut.handle(request);
@@ -123,7 +151,10 @@ describe('SignInController', () => {
     const undefinedUseCase = {} as ISignInUseCase;
     const sut = new SignInController(undefinedUseCase);
 
-    const data = { email: 'email@teste.com.br', password: '12345' } as SignInRequestDTO;
+    const data = {
+      email: 'email@teste.com.br',
+      password: '12345'
+    } as SignInRequestDTO;
     const request = new HttpRequest(data);
 
     const response = await sut.handle(request);

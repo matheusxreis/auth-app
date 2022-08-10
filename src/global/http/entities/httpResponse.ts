@@ -1,14 +1,18 @@
-import { BadRequestInvalidParam, BadRequestMissingParamError } from '../errors/BadRequestError';
+import {
+  BadRequestInvalidParam,
+  BadRequestMissingParamError
+} from '../errors/BadRequestError';
 import { InternalServerError } from '../errors/InternalServerError';
 import { NotAuthorizedError } from '../errors/NotAuthorizedError';
 
-type BadRequestType = 'missing' | 'invalid'
+type BadRequestType = 'missing' | 'invalid';
 export class HttpResponse {
   readonly body: any;
-  static badRequest (param:string, type:BadRequestType = 'missing') {
+  static badRequest (param: string, type: BadRequestType = 'missing') {
     return {
       statusCode: 400,
-      body: type === 'missing'
+      body:
+      type === 'missing'
         ? new BadRequestMissingParamError(param)
         : new BadRequestInvalidParam(param)
     };
@@ -21,14 +25,14 @@ export class HttpResponse {
     };
   }
 
-  static ok (body?:object) {
+  static ok (body?: object) {
     return {
       statusCode: 200,
       body: body || { message: 'OK' }
     };
   }
 
-  static created (b:any) {
+  static created (b: any) {
     return {
       statusCode: 201,
       body: b

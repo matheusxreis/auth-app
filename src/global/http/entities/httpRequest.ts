@@ -1,6 +1,6 @@
-export class HttpRequest<T=any> {
+export class HttpRequest<T = any> {
   readonly body: T;
-  constructor (body:T) {
+  constructor (body: T) {
     this.body = body;
   }
 }

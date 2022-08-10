@@ -1,10 +1,10 @@
 interface User {
-username:string;
-id:string;
+username: string;
+id: string;
 }
 
 export interface SignInResponseDTO {
-user:User;
+user: User;
 token: string;
-timestamp:number;
+timestamp: number;
 }

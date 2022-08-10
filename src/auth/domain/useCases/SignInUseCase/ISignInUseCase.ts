@@ -1,12 +1,12 @@
 interface UserReturnUseCase {
-username: string,
-id:string,
-};
+username: string;
+id: string;
+}
 export interface ISignInUseCaseReturn {
-user: UserReturnUseCase,
-timestamp: number,
-token: string
-};
+user: UserReturnUseCase;
+timestamp: number;
+token: string;
+}
 export interface ISignInUseCase {
-execute(email:string, password:string):Promise<ISignInUseCaseReturn|null>;
-};
+execute(email: string, password: string): Promise<ISignInUseCaseReturn | null>;
+}
