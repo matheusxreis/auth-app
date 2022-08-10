@@ -59,7 +59,7 @@ describe('SignInController', () => {
 
     const responseBody = await signInUseCase.execute();
 
-    expect(response).toEqual(HttpResponse.ok({}));
+    expect(response).toEqual(HttpResponse.ok(responseBody));
     expect(response).toHaveProperty('body');
     expect(response.body).toEqual(responseBody);
   });
