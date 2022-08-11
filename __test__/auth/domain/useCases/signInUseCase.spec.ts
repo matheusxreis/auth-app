@@ -3,6 +3,7 @@ import { InvalidInjectionError } from '../../../../src/auth/domain/errors/Invali
 import { IAuthRepository } from '../../../../src/auth/domain/irepositories/authRepository';
 import { SignInResponseDTO } from '../../../../src/auth/dtos/SignInResponseDTO';
 import { SignInUseCase } from '../../../../src/auth/domain/useCases/SignInUseCase/signInUseCase';
+import bcrypt from 'bcrypt';
 
 const makeSut = () => {
   const repository = {
@@ -83,5 +84,14 @@ describe('SignInUseCase', () => {
     const result = await sut.execute('valid.email@gmail.com', '123456789');
 
     expect(result).toEqual(null);
+  });
+  it('should bcryp receive correct password to compare', async () => {
+    const { sut } = makeSut();
+    const bcryptHash = jest.spyOn(bcrypt, 'compare');
+
+    const password = '1234567*';
+    await sut.execute('valid_email@gmail.com', password);
+
+    expect(bcryptHash).toBeCalledWith('a');
   });
 });
