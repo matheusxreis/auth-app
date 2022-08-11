@@ -2,26 +2,7 @@ import { EmptyParamFieldError } from '../../../../src/auth/domain/errors/EmptyPa
 import { InvalidInjectionError } from '../../../../src/auth/domain/errors/InvalidInjectionError';
 import { IAuthRepository } from '../../../../src/auth/domain/irepositories/authRepository';
 import { SignInResponseDTO } from '../../../../src/auth/dtos/SignInResponseDTO';
-
-class SignInUseCase {
-  constructor (private authRepository: IAuthRepository) {}
-
-  async execute (email: string, password: string) {
-    if (!email) {
-      throw new EmptyParamFieldError('email');
-    }
-    if (!password) {
-      throw new EmptyParamFieldError('password');
-    }
-    if (!this.authRepository.signIn) {
-      throw new InvalidInjectionError(
-        'AuthRepository must has a signIn method',
-        'SignInUseCase'
-      );
-    }
-    return await this.authRepository.signIn(email, password);
-  }
-}
+import { SignInUseCase } from '../../../../src/auth/domain/useCases/SignInUseCase/signInUseCase';
 
 const makeSut = () => {
   const repository = {
