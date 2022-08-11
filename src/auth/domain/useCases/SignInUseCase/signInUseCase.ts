@@ -21,7 +21,17 @@ export class SignInUseCase {
     }
     const userData = await this.authRepository.getUserByEmail(email);
     if (!userData) { return null; }
-    await bcrypt.compare(password, String(userData?.hashPassword));
-    return await this.authRepository.signIn(email, password);
+    const isPasswordRight = await bcrypt.compare(password, String(userData?.hashPassword));
+    if (!isPasswordRight) { return null; }
+
+    const user = {
+      username: userData.name,
+      id: userData.id
+    };
+    return {
+      user,
+      timestap: new Date().getTime(),
+      token: 'access_token'
+    };
   }
 }

@@ -6,6 +6,8 @@ import { SignInUseCase } from '../../../../src/auth/domain/useCases/SignInUseCas
 import bcrypt from 'bcrypt';
 import { User } from '../../../../src/auth/domain/entities/user';
 
+jest.spyOn(bcrypt, 'compare').mockImplementation(() => true);
+
 const makeSut = () => {
   const repository = {
     signIn: async () =>
@@ -22,6 +24,7 @@ const makeSut = () => {
         resolve({
           name: 'UserName',
           email: 'A valid email',
+          id: '92782k2j',
           hashPassword: '162yhj2mk*(72g23232',
           createdAccountAt: 12729272828
         })
@@ -48,29 +51,6 @@ describe('SignInUseCase', () => {
     expect(
       async () => await sut.execute('matheus.reis@gmail.com', '')
     ).rejects.toThrow(new EmptyParamFieldError('password'));
-  });
-  it('should repository signIn method receive email and password correctly', async () => {
-    const email = 'email.correct@gmail.com';
-    const password = '123*456*78';
-
-    const repository = {
-      signIn: jest.fn(),
-      signUp: jest.fn(),
-      getUserByEmail: async () =>
-        await new Promise<User|null>((resolve, reject) =>
-          resolve({
-            name: 'UserName',
-            email: 'A valid email',
-            hashPassword: '162yhj2mk*(72g23232',
-            createdAccountAt: 12729272828
-          })
-        ).then(x => x)
-    };
-    const sut = new SignInUseCase(repository);
-
-    await sut.execute(email, password);
-
-    expect(repository.signIn).toBeCalledWith(email, password);
   });
   it('should repository getUserByEmail method receive email correct', async () => {
     const repository = {
@@ -99,8 +79,16 @@ describe('SignInUseCase', () => {
     const { sut, repository } = makeSut();
 
     const result = await sut.execute('valid.email@gmail.com', '123456789');
-
-    expect(result).toEqual(await repository.signIn());
+    const userData = await repository.getUserByEmail() as User;
+    const user = {
+      username: userData.name,
+      id: userData.id
+    };
+    expect(result).toEqual({
+      user,
+      timestap: new Date().getTime(),
+      token: 'access_token'
+    });
   });
   it('should return null if repository signIn method return null', async () => {
     const repository = {
@@ -152,5 +140,13 @@ describe('SignInUseCase', () => {
     const useCase = new SignInUseCase(repository);
     await useCase.execute('unexisted.email@gmail.com', '12*787&1');
     expect(bcryptHash).not.toBeCalled();
+  });
+  it('should return null if bcrypt compare method return false', async () => {
+    const { sut } = makeSut();
+    jest.spyOn(bcrypt, 'compare').mockImplementation(() => false);
+
+    const returnSut = await sut.execute('valid_email@gmail.com', '1234567*');
+
+    expect(returnSut).toBeNull();
   });
 });
