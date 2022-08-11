@@ -30,7 +30,7 @@ export class SignInUseCase {
     };
     return {
       user,
-      timestap: new Date().getTime(),
+      timestap: 123456,
       token: 'access_token'
     };
   }

@@ -86,7 +86,7 @@ describe('SignInUseCase', () => {
     };
     expect(result).toEqual({
       user,
-      timestap: new Date().getTime(),
+      timestap: 12345,
       token: 'access_token'
     });
   });
