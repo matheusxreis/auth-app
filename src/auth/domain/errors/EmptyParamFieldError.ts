@@ -1,6 +1,7 @@
 export class EmptyParamFieldError extends Error {
   constructor (param: string) {
-    super(`Missing param: ${param}.`);
+    super();
+    this.message = `Missing param: ${param}.`;
     this.name = 'EmptyParamField(dev): Missing Param';
   }
 }
