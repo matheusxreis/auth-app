@@ -30,7 +30,7 @@ export class SignInUseCase {
     };
     return {
       user,
-      timestap: 123456,
+      timestap: 12345,
       token: 'access_token'
     };
   }
