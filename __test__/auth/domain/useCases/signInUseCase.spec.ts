@@ -49,7 +49,7 @@ describe('SignInUseCase', () => {
       async () => await sut.execute('matheus.reis@gmail.com', '')
     ).rejects.toThrow(new EmptyParamFieldError('password'));
   });
-  it('should repository receive email and password correctly', async () => {
+  it('should repository signIn method receive email and password correctly', async () => {
     const email = 'email.correct@gmail.com';
     const password = '123*456*78';
 
@@ -71,6 +71,17 @@ describe('SignInUseCase', () => {
     await sut.execute(email, password);
 
     expect(repository.signIn).toBeCalledWith(email, password);
+  });
+  it('should repository getUserByEmail method receive email correct', async () => {
+    const repository = {
+      signIn: jest.fn(),
+      signUp: jest.fn(),
+      getUserByEmail: jest.fn()
+    };
+    const email = 'correct.email@gmail.com';
+    const sut = new SignInUseCase(repository);
+    await sut.execute(email, '123455*&90');
+    expect(repository.getUserByEmail).toBeCalledWith(email);
   });
   it('should throw a error if receive a not valid repository throught constructor', async () => {
     const { errorSut: sut } = makeSut();
