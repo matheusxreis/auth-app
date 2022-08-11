@@ -100,12 +100,8 @@ describe('SignInController', () => {
   it('should return a error 401 in case of use case doesnt return a token', async () => {
     const signInUseCase = {
       execute: async () =>
-        new Promise<ISignInUseCaseReturn>((resolve, reject) =>
-          resolve({
-            user: { username: '', id: '' },
-            timestamp: 1,
-            token: ''
-          })
+        new Promise<ISignInUseCaseReturn|null>((resolve, reject) =>
+          resolve(null)
         ).then(x => x)
     };
     const sut = new SignInController(signInUseCase);

@@ -4,5 +4,5 @@ import { User } from '../entities/user';
 export interface IAuthRepository {
 signIn(email: string, password: string): Promise<SignInResponseDTO | null>;
 signUp(): void;
-getUserByEmail(email:string):Promise<User>
+getUserByEmail(email:string):Promise<User|null>
 }
