@@ -1,10 +1,10 @@
-import { EmptyParamFieldError } from '../../errors/EmptyParamFieldError';
-import { InvalidInjectionError } from '../../errors/InvalidInjectionError';
-import { IAuthRepository } from '../../irepositories/authRepository';
 import bcrypt from 'bcrypt';
+import { EmptyParamFieldError } from '../errors/EmptyParamFieldError';
+import { InvalidInjectionError } from '../errors/InvalidInjectionError';
+import { IGetByEmailRepository } from '../irepositories/getByEmailRepository';
 
 export class SignInUseCase {
-  constructor (private authRepository: IAuthRepository) {}
+  constructor (private getByEmailRepository: IGetByEmailRepository) {}
 
   async execute (email: string, password: string) {
     if (!email) {
@@ -13,13 +13,13 @@ export class SignInUseCase {
     if (!password) {
       throw new EmptyParamFieldError('password');
     }
-    if (!this.authRepository.signIn) {
+    if (!this.getByEmailRepository.getUserByEmail) {
       throw new InvalidInjectionError(
         'AuthRepository must has a signIn method',
         'SignInUseCase'
       );
     }
-    const userData = await this.authRepository.getUserByEmail(email);
+    const userData = await this.getByEmailRepository.getUserByEmail(email);
     if (!userData) { return null; }
     const isPasswordRight = await bcrypt.compare(password, String(userData?.hashPassword));
     if (!isPasswordRight) { return null; }

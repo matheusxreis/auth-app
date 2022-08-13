@@ -1,10 +1,7 @@
-export class User {
-  constructor (
-        readonly name: string,
-        readonly email: string,
-        readonly hashPassword: string,
-        readonly createdAccountAt: number,
-        readonly id: string
-
-  ) {}
+export type User = {
+name: string,
+email: string,
+hashPassword: string,
+createdAccountAt: number,
+id: string
 }

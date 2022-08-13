@@ -1,8 +1,7 @@
-import { EmptyParamFieldError } from '../../../../src/auth/domain/errors/EmptyParamFieldError';
-import { InvalidInjectionError } from '../../../../src/auth/domain/errors/InvalidInjectionError';
-import { IAuthRepository } from '../../../../src/auth/domain/irepositories/authRepository';
-import { SignInResponseDTO } from '../../../../src/auth/dtos/SignInResponseDTO';
-import { SignInUseCase } from '../../../../src/auth/domain/useCases/SignInUseCase/signInUseCase';
+import { EmptyParamFieldError } from '../../../../src/auth/data/errors/EmptyParamFieldError';
+import { InvalidInjectionError } from '../../../../src/auth/data/errors/InvalidInjectionError';
+import { IGetByEmailRepository } from '../../../../src/auth/data/irepositories/getByEmailRepository';
+import { SignInUseCase } from '../../../../src/auth/data/useCases/signInUseCase';
 import bcrypt from 'bcrypt';
 import { User } from '../../../../src/auth/domain/entities/user';
 
@@ -10,15 +9,6 @@ jest.spyOn(bcrypt, 'compare').mockImplementation(() => true);
 
 const makeSut = () => {
   const repository = {
-    signIn: async () =>
-      await new Promise<SignInResponseDTO>((resolve, reject) =>
-        resolve({
-          user: { username: 'username', id: 'id' },
-          timestamp: 12334,
-          token: 'access_token_jwt'
-        })
-      ).then(x => x),
-    signUp: jest.fn(),
     getUserByEmail: async () =>
       await new Promise<User|null>((resolve, reject) =>
         resolve({
@@ -30,7 +20,7 @@ const makeSut = () => {
         })
       ).then(x => x)
   };
-  const errorRepository = {} as IAuthRepository;
+  const errorRepository = {} as IGetByEmailRepository;
   const sut = new SignInUseCase(repository);
   const errorSut = new SignInUseCase(errorRepository);
 
@@ -90,28 +80,12 @@ describe('SignInUseCase', () => {
       token: 'access_token'
     });
   });
-  it('should return null if repository signIn method return null', async () => {
-    const repository = {
-      signIn: async () =>
-        await new Promise<SignInResponseDTO | null>((resolve, reject) =>
-          resolve(null)
-        ).then(x => x),
-      signUp: jest.fn(),
-      getUserByEmail: jest.fn()
-    };
-    const sut = new SignInUseCase(repository);
-    const result = await sut.execute('valid.email@gmail.com', '123456789');
-
-    expect(result).toEqual(null);
-  });
   it('should return null if has no user in database with email', async () => {
     const repository = {
-      signIn: jest.fn(),
-      signUp: jest.fn(),
       getUserByEmail: async () => await new Promise((resolve, reject) => {
         resolve(null);
       }).then(x => x)
-    } as IAuthRepository;
+    } as IGetByEmailRepository;
 
     const useCase = new SignInUseCase(repository);
 
@@ -130,12 +104,10 @@ describe('SignInUseCase', () => {
   it('should not call bcrypt compare method if has no user in database with email', async () => {
     const bcryptHash = jest.spyOn(bcrypt, 'compare');
     const repository = {
-      signIn: jest.fn(),
-      signUp: jest.fn(),
       getUserByEmail: async () => await new Promise((resolve, reject) => {
         resolve(null);
       }).then(x => x)
-    } as IAuthRepository;
+    } as IGetByEmailRepository;
 
     const useCase = new SignInUseCase(repository);
     await useCase.execute('unexisted.email@gmail.com', '12*787&1');
