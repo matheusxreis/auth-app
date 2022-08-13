@@ -1,10 +1,11 @@
-import bcrypt from 'bcrypt';
 import { EmptyParamFieldError } from '../errors/EmptyParamFieldError';
 import { InvalidInjectionError } from '../errors/InvalidInjectionError';
-import { IGetByEmailRepository } from '../irepositories/getByEmailRepository';
+import { iEncrypterRepository } from '../irepositories/iencrypterRepository';
+import { IGetByEmailRepository } from '../irepositories/igetByEmailRepository';
 
 export class SignInUseCase {
-  constructor (private getByEmailRepository: IGetByEmailRepository) {}
+  constructor (private getByEmailRepository: IGetByEmailRepository,
+              private encrypter: iEncrypterRepository) {}
 
   async execute (email: string, password: string) {
     if (!email) {
@@ -21,7 +22,7 @@ export class SignInUseCase {
     }
     const userData = await this.getByEmailRepository.getUserByEmail(email);
     if (!userData) { return null; }
-    const isPasswordRight = await bcrypt.compare(password, String(userData?.hashPassword));
+    const isPasswordRight = await this.encrypter.compare(password, String(userData?.hashPassword));
     if (!isPasswordRight) { return null; }
 
     const user = {
