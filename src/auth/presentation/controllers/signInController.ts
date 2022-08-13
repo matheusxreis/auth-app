@@ -3,7 +3,7 @@ import { Validator } from '../../../global/utils/validator';
 import { HttpRequest } from '../../../global/http/entities/httpRequest';
 import { HttpResponse } from '../../../global/http/entities/httpResponse';
 import { isBodyEmpty } from '../../../global/http/helpers/isBodyEmpty';
-import { SignInRequestDTO } from '../../dtos/SignInRequestDTO';
+import { SignInRequestDTO } from '../dtos/SignInRequestDTO';
 
 export class SignInController {
   constructor (private useCase: ISignInUseCase) {}

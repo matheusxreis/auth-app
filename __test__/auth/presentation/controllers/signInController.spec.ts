@@ -1,4 +1,4 @@
-import { SignInRequestDTO } from '../../../../src/auth/dtos/SignInRequestDTO';
+import { SignInRequestDTO } from '../../../../src/auth/presentation/dtos/SignInRequestDTO';
 import { SignInController } from '../../../../src/auth/presentation/controllers/signInController';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
