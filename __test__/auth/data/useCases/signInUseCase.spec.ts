@@ -1,5 +1,5 @@
-import { EmptyParamFieldError } from '../../../../src/auth/data/errors/EmptyParamFieldError';
-import { InvalidInjectionError } from '../../../../src/auth/data/errors/InvalidInjectionError';
+import { EmptyParamFieldError } from '../../../../src/global/errors/EmptyParamFieldError';
+import { InvalidInjectionError } from '../../../../src/global/errors/InvalidInjectionError';
 import { iGetByEmailRepository } from '../../../../src/auth/data/irepositories/igetByEmailRepository';
 import { SignInUseCase } from '../../../../src/auth/data/useCases/signInUseCase';
 import { User } from '../../../../src/auth/domain/entities/user';

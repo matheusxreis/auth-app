@@ -1,5 +1,5 @@
-import { EmptyParamFieldError } from '../errors/EmptyParamFieldError';
-import { InvalidInjectionError } from '../errors/InvalidInjectionError';
+import { EmptyParamFieldError } from '../../../global/errors/EmptyParamFieldError';
+import { InvalidInjectionError } from '../../../global/errors/InvalidInjectionError';
 import { iEncrypterRepository } from '../irepositories/iencrypterRepository';
 import { iGenerateTokenRepository } from '../irepositories/igenerateTokenRepository';
 import { iGetByEmailRepository } from '../irepositories/igetByEmailRepository';
