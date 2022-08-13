@@ -6,3 +6,4 @@ yarn.lock
 /bin
 package-lock.json 
 .package.config
+.env
