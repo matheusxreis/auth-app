@@ -36,7 +36,7 @@ export class SignInUseCase {
     };
     return {
       user,
-      timestap: 12345,
+      timestap: new Date().getTime(),
       token
     };
   }

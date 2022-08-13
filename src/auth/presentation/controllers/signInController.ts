@@ -1,4 +1,4 @@
-import { ISignInUseCase } from 'src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
+import { ISignInUseCase } from 'src/auth/domain/iuseCases/isignInUseCase';
 import { Validator } from '../../../global/utils/validator';
 import { HttpRequest } from '../../../global/http/entities/httpRequest';
 import { HttpResponse } from '../../../global/http/entities/httpResponse';

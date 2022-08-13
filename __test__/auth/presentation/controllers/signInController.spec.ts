@@ -5,7 +5,7 @@ import { HttpResponse } from '../../../../src/global/http/entities/httpResponse'
 import {
   ISignInUseCase,
   ISignInUseCaseReturn
-} from '../../../../src/auth/domain/useCases/SignInUseCase/ISignInUseCase';
+} from '../../../../src/auth/domain/iuseCases/isignInUseCase';
 // sut = system under test - the system which is being testing
 const makeSut = () => {
   const signInUseCase = {

@@ -93,9 +93,16 @@ describe('SignInUseCase', () => {
     };
 
     const token = await generateToken.generate();
-    expect(result).toEqual({
+
+    const formattedResult = {
+      user: result!.user,
+      timestamp: new Date(result!.timestap).getDay(),
+      token: result!.token
+    };
+
+    expect(formattedResult).toEqual({
       user,
-      timestap: 12345,
+      timestamp: new Date(result!.timestap).getDay(),
       token
     });
   });
