@@ -96,13 +96,13 @@ describe('SignInUseCase', () => {
 
     const formattedResult = {
       user: result!.user,
-      timestamp: new Date(result!.timestap).getDay(),
+      timestamp: new Date(result!.timestamp).getDay(),
       token: result!.token
     };
 
     expect(formattedResult).toEqual({
       user,
-      timestamp: new Date(result!.timestap).getDay(),
+      timestamp: new Date(result!.timestamp).getDay(),
       token
     });
   });

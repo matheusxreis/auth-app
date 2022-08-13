@@ -3,7 +3,7 @@ import { SignInController } from '../../../../src/auth/presentation/controllers/
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
 import {
-  ISignInUseCase,
+  iSignInUseCase,
   ISignInUseCaseReturn
 } from '../../../../src/auth/domain/iuseCases/isignInUseCase';
 // sut = system under test - the system which is being testing
@@ -144,7 +144,7 @@ describe('SignInController', () => {
     expect(response).toEqual(HttpResponse.serverError());
   });
   it('should return a error 500 if a use case inject is undefined', async () => {
-    const undefinedUseCase = {} as ISignInUseCase;
+    const undefinedUseCase = {} as iSignInUseCase;
     const sut = new SignInController(undefinedUseCase);
 
     const data = {
