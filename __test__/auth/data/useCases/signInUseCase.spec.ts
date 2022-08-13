@@ -1,6 +1,6 @@
 import { EmptyParamFieldError } from '../../../../src/auth/data/errors/EmptyParamFieldError';
 import { InvalidInjectionError } from '../../../../src/auth/data/errors/InvalidInjectionError';
-import { IGetByEmailRepository } from '../../../../src/auth/data/irepositories/igetByEmailRepository';
+import { iGetByEmailRepository } from '../../../../src/auth/data/irepositories/igetByEmailRepository';
 import { SignInUseCase } from '../../../../src/auth/data/useCases/signInUseCase';
 import { User } from '../../../../src/auth/domain/entities/user';
 import { iEncrypterRepository } from '../../../../src/auth/data/irepositories/iencrypterRepository';
@@ -24,11 +24,23 @@ const makeSut = () => {
         resolve(true))
         .then(x => x)
   };
-  const errorRepository = {} as IGetByEmailRepository;
-  const sut = new SignInUseCase(repository, encrypter);
-  const errorSut = new SignInUseCase(errorRepository, encrypter);
+  const generateToken = {
+    generate: async () =>
+      await new Promise<string>((resolve, reject) =>
+        resolve('access_token'))
+        .then(x => x)
+  };
+  const errorGenerateToken = {
+    generate: async () =>
+      await new Promise<string>((resolve, reject) =>
+        resolve(''))
+        .then(x => x)
+  };
+  const errorRepository = {} as iGetByEmailRepository;
+  const sut = new SignInUseCase(repository, encrypter, generateToken);
+  const errorSut = new SignInUseCase(errorRepository, encrypter, generateToken);
 
-  return { sut, repository, errorSut, encrypter };
+  return { sut, repository, errorSut, encrypter, generateToken, errorGenerateToken };
 };
 
 describe('SignInUseCase', () => {
@@ -47,14 +59,14 @@ describe('SignInUseCase', () => {
     ).rejects.toThrow(new EmptyParamFieldError('password'));
   });
   it('should repository getUserByEmail method receive email correct', async () => {
-    const { encrypter } = makeSut();
+    const { encrypter, generateToken } = makeSut();
     const repository = {
       signIn: jest.fn(),
       signUp: jest.fn(),
       getUserByEmail: jest.fn()
     };
     const email = 'correct.email@gmail.com';
-    const sut = new SignInUseCase(repository, encrypter);
+    const sut = new SignInUseCase(repository, encrypter, generateToken);
     await sut.execute(email, '123455*&90');
     expect(repository.getUserByEmail).toBeCalledWith(email);
   });
@@ -71,7 +83,7 @@ describe('SignInUseCase', () => {
     );
   });
   it('should return a signInResponseDTO if all is ok', async () => {
-    const { sut, repository } = makeSut();
+    const { sut, repository, generateToken } = makeSut();
 
     const result = await sut.execute('valid.email@gmail.com', '123456789');
     const userData = await repository.getUserByEmail() as User;
@@ -79,29 +91,31 @@ describe('SignInUseCase', () => {
       username: userData.name,
       id: userData.id
     };
+
+    const token = await generateToken.generate();
     expect(result).toEqual({
       user,
       timestap: 12345,
-      token: 'access_token'
+      token
     });
   });
   it('should return null if has no user in database with email', async () => {
-    const { encrypter } = makeSut();
+    const { encrypter, generateToken } = makeSut();
     const repository = {
       getUserByEmail: async () => await new Promise((resolve, reject) => {
         resolve(null);
       }).then(x => x)
-    } as IGetByEmailRepository;
+    } as iGetByEmailRepository;
 
-    const useCase = new SignInUseCase(repository, encrypter);
+    const useCase = new SignInUseCase(repository, encrypter, generateToken);
 
     expect(await useCase.execute('email@email.com', '123456')).toBeNull();
   });
   it('should encrypter receive correct password to compare', async () => {
-    const { repository } = makeSut();
+    const { repository, generateToken } = makeSut();
 
     const encrypter = { compare: jest.fn() };
-    const sut = new SignInUseCase(repository, encrypter);
+    const sut = new SignInUseCase(repository, encrypter, generateToken);
     const password = '1234567*';
     const user = await repository.getUserByEmail() as User;
     await sut.execute('valid_email@gmail.com', password);
@@ -109,28 +123,50 @@ describe('SignInUseCase', () => {
     expect(encrypter.compare).toBeCalledWith(password, user.hashPassword);
   });
   it('should not call encrypter compare method if has no user in database with email', async () => {
+    const { generateToken } = makeSut();
     const encrypter = { compare: jest.fn() };
     const repository = {
       getUserByEmail: async () => await new Promise((resolve, reject) => {
         resolve(null);
       }).then(x => x)
-    } as IGetByEmailRepository;
+    } as iGetByEmailRepository;
 
-    const useCase = new SignInUseCase(repository, encrypter);
+    const useCase = new SignInUseCase(repository, encrypter, generateToken);
     await useCase.execute('unexisted.email@gmail.com', '12*787&1');
     expect(encrypter.compare).not.toBeCalled();
   });
-  it('should return null if bcrypt compare method return false', async () => {
-    const { repository } = makeSut();
+  it('should return null if encrypter compare method return false', async () => {
+    const { repository, generateToken } = makeSut();
     const encrypter = {
       compare: async () => new Promise((resolve, reject) =>
         resolve(null))
         .then(x => x)
     } as iEncrypterRepository;
-    const sut = new SignInUseCase(repository, encrypter);
+    const sut = new SignInUseCase(repository, encrypter, generateToken);
 
     const returnSut = await sut.execute('valid_email@gmail.com', '1234567*');
 
     expect(returnSut).toBeNull();
+  });
+  it('should generateToken receive correct userId to generate the token', async () => {
+    const { repository, encrypter } = makeSut();
+    const generateToken = { generate: jest.fn().mockImplementation(() => 'access_token') };
+    const sut = new SignInUseCase(repository, encrypter, generateToken);
+
+    await sut.execute('valid.email@gmail.com', '1234*71571');
+    const user = await repository.getUserByEmail();
+
+    expect(generateToken.generate).toBeCalledWith(user!.id);
+  });
+  it('should throw if generateToken not return a access_token', async () => {
+    const {
+      repository,
+      encrypter,
+      errorGenerateToken: generateToken
+    } = makeSut();
+    const sut = new SignInUseCase(repository, encrypter, generateToken);
+
+    expect(async () => await sut.execute('valid.email@gmail.com', '12347*&6'))
+      .rejects.toThrow();
   });
 });

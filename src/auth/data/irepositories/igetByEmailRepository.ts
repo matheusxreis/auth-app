@@ -1,5 +1,5 @@
 import { User } from '../../domain/entities/user';
 
-export interface IGetByEmailRepository {
+export interface iGetByEmailRepository {
     getUserByEmail(email:string):Promise<User|null>
 }

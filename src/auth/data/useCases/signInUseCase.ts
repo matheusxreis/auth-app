@@ -1,11 +1,13 @@
 import { EmptyParamFieldError } from '../errors/EmptyParamFieldError';
 import { InvalidInjectionError } from '../errors/InvalidInjectionError';
 import { iEncrypterRepository } from '../irepositories/iencrypterRepository';
-import { IGetByEmailRepository } from '../irepositories/igetByEmailRepository';
+import { iGenerateTokenRepository } from '../irepositories/igenerateTokenRepository';
+import { iGetByEmailRepository } from '../irepositories/igetByEmailRepository';
 
 export class SignInUseCase {
-  constructor (private getByEmailRepository: IGetByEmailRepository,
-              private encrypter: iEncrypterRepository) {}
+  constructor (private getByEmailRepository: iGetByEmailRepository,
+              private encrypter: iEncrypterRepository,
+              private generateToken: iGenerateTokenRepository) {}
 
   async execute (email: string, password: string) {
     if (!email) {
@@ -25,6 +27,9 @@ export class SignInUseCase {
     const isPasswordRight = await this.encrypter.compare(password, String(userData?.hashPassword));
     if (!isPasswordRight) { return null; }
 
+    const token = await this.generateToken.generate(userData.id);
+
+    if (!token) { throw new Error(); }
     const user = {
       username: userData.name,
       id: userData.id
@@ -32,7 +37,7 @@ export class SignInUseCase {
     return {
       user,
       timestap: 12345,
-      token: 'access_token'
+      token
     };
   }
 }
