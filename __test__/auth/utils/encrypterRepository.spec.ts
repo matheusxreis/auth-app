@@ -31,4 +31,21 @@ describe('EncrypterRepository', () => {
       .rejects
       .toThrow();
   });
+  it('should return true if bcrypt returns true', async () => {
+    const { sut } = makeSut();
+    const result = await sut.compare('password', 'hashPassword');
+    expect(result)
+      .toBe(true);
+    expect(result)
+      .not.toBeNull();
+  });
+  it('should return false if bcrypt returns false', async () => {
+    const { sut } = makeSut();
+    jest.spyOn(bcrypt, 'compare').mockImplementation(async () => false);
+    const result = await sut.compare('password', 'hashPassword');
+    expect(result)
+      .toBe(false);
+    expect(result)
+      .not.toBeNull();
+  });
 });
