@@ -5,7 +5,7 @@ import { iSignUpRepository } from '../irepositories/isignUpRepository';
 
 export class SignUpUseCase implements iSignUpUseCase {
   constructor (private repository: iSignUpRepository,
-    encrypter: iEncrypterEncryptRepository) {}
+    private encrypter: iEncrypterEncryptRepository) {}
 
   async execute (params: iSignUpUseCaseParams) {
     if (!params.email) { throw new EmptyParamFieldError('email'); }
@@ -26,7 +26,13 @@ export class SignUpUseCase implements iSignUpUseCase {
       };
     }
 
-    const userRegistered = await this.repository.signUp(params);
+    const hashPassword = await this.encrypter.encrypt(params.password);
+    const rightParamsToRegister = {
+      ...params,
+      password: hashPassword
+    };
+
+    const userRegistered = await this.repository.signUp(rightParamsToRegister);
 
     return {
       username: userRegistered.username,

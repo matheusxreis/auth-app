@@ -81,11 +81,16 @@ describe('SignUpUseCase', () => {
     expect(response.emailAlreadyExist).toBe(false);
   });
   it('should signUp method of repository receive right params in case of user not exist', async () => {
-    const { sut, repository } = makeSut();
+    const { sut, repository, encrypter } = makeSut();
 
     await sut.execute(params);
 
-    expect(repository.signUp).toBeCalledWith(params);
+    const receivedParams = {
+      ...params,
+      password: encrypter.encrypt()
+    };
+
+    expect(repository.signUp).toBeCalledWith(receivedParams);
   });
   it('should signUp method of repository return the registered user in case of all is ok', async () => {
     const { sut, repository } = makeSut();
@@ -139,5 +144,32 @@ describe('SignUpUseCase', () => {
     const sut = new SignUpUseCase(errorRepository, encrypter);
 
     expect(async () => await sut.execute(params)).rejects.toThrow();
+  });
+  it('should encrypter receive correct password', async () => {
+    const { sut, encrypter } = makeSut();
+
+    await sut.execute(params);
+
+    expect(encrypter.encrypt).toBeCalledWith(params.password);
+  });
+  it('should throws if encrypter throws', async () => {
+    const encrypter = { encrypt: () => { throw new Error(); } };
+    const { repository } = makeSut();
+    const sut = new SignUpUseCase(repository, encrypter);
+
+    expect(async () => await sut.execute(params)).rejects.toThrow();
+  });
+  it('should not call encrypter method if user exist', async () => {
+    const { encrypter } = makeSut();
+    const repository = {
+      getByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
+      getByUsername: jest.fn(),
+      signUp: jest.fn()
+    };
+    const sut = new SignUpUseCase(repository, encrypter);
+
+    await sut.execute(params);
+
+    expect(encrypter.encrypt).not.toBeCalled();
   });
 });
