@@ -1,4 +1,4 @@
-import { EncrypterRepository } from '../../../src/auth/utils/encrypterRepository';
+import { EncrypterRepository } from '../../../src/auth/helpers/encrypterRepository';
 import bcrypt from 'bcrypt';
 
 jest.spyOn(bcrypt, 'compare').mockImplementation(async () => true);

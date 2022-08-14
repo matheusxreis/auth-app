@@ -1,4 +1,4 @@
-import { GenerateTokenRepository } from '../../../src/auth/utils/generateTokenRepository';
+import { GenerateTokenRepository } from '../../../src/auth/helpers/generateTokenRepository';
 import { verify } from 'jsonwebtoken';
 import { EmptyParamFieldError } from '../../../src/global/errors/EmptyParamFieldError';
 
