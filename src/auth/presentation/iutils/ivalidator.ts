@@ -1,4 +1,4 @@
 export interface iValidator {
-isEmailValid():boolean;
-isPasswordValid():boolean
+isEmailValid(email:string):boolean;
+isPasswordValid(password:string):boolean
 }
