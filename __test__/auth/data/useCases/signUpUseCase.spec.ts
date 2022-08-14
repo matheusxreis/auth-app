@@ -145,6 +145,19 @@ describe('SignUpUseCase', () => {
 
     expect(async () => await sut.execute(params)).rejects.toThrow();
   });
+  it('should not call signUp method  of repository if user exist', async () => {
+    const { encrypter } = makeSut();
+    const repository = {
+      getByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
+      getByUsername: jest.fn(),
+      signUp: jest.fn()
+    };
+    const sut = new SignUpUseCase(repository, encrypter);
+
+    await sut.execute(params);
+
+    expect(repository.signUp).not.toBeCalled();
+  });
   it('should encrypter receive correct password', async () => {
     const { sut, encrypter } = makeSut();
 
