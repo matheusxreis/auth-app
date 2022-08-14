@@ -117,7 +117,12 @@ describe('SignUpController', () => {
     const response = await sut.handle(req);
     const user = await useCase.execute();
 
-    expect(response).toEqual(HttpResponse.created({ user }));
+    const newUser = {
+      username: user.username,
+      id: user.id,
+      email: user.email
+    };
+    expect(response).toEqual(HttpResponse.created({ user: newUser }));
   });
   it('should return 400 if email is already registered', async () => {
     const { validator } = makeSut();

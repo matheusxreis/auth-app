@@ -25,7 +25,12 @@ export class SignUpController {
       const user = await this.signUpUseCase.execute({ username, email, password });
       if (user.emailAlreadyExist) { return HttpResponse.badRequestDataAlreadyExist('E-mail'); }
       if (user.usernameAlreadyExist) { return HttpResponse.badRequestDataAlreadyExist('Username'); }
-      return HttpResponse.created({ user });
+      const newUser = {
+        username: user.username,
+        id: user.id,
+        email: user.email
+      };
+      return HttpResponse.created({ user: newUser });
     } catch {
       return HttpResponse.serverError();
     }
