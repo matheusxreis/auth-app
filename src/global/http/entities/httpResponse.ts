@@ -18,6 +18,13 @@ export class HttpResponse {
     };
   }
 
+  static badRequestDataAlreadyExist (data: string) {
+    return {
+      statusCode: 400,
+      body: new Error(`${data} already exist.`)
+    };
+  }
+
   static serverError () {
     return {
       statusCode: 500,
