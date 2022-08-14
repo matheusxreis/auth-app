@@ -1,41 +1,6 @@
-import { iValidator } from '../../../../src/auth/presentation/iutils/ivalidator';
+import { SignUpController } from '../../../../src/auth/presentation/controllers/signUpController';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
-import { iSignUpUseCase } from '../../../../src/auth/domain/iuseCases/isignUpUseCase';
-
-export interface ISignUpRequestDTO {
-username:string;
-email:string;
-password:string;
-}
-
-class SignUpController {
-  constructor (
-      private signUpUseCase: iSignUpUseCase,
-      private validator: iValidator
-  ) {}
-
-  async handle (req: HttpRequest<ISignUpRequestDTO>) {
-    const { username, email, password } = req.body;
-    if (!email) { return HttpResponse.badRequest('email'); }
-    if (!username) { return HttpResponse.badRequest('username'); }
-    if (!password) { return HttpResponse.badRequest('password'); }
-
-    const isEmailValid = this.validator.isEmailValid(email);
-    const isPasswordValid = this.validator.isPasswordValid(password);
-    if (!isEmailValid) { return HttpResponse.badRequest('email', 'invalid'); }
-    if (!isPasswordValid) { return HttpResponse.badRequest('password', 'invalid'); }
-
-    try {
-      const user = await this.signUpUseCase.execute({ username, email, password });
-      if (user.emailAlreadyExist) { return HttpResponse.badRequestDataAlreadyExist('E-mail'); }
-      if (user.usernameAlreadyExist) { return HttpResponse.badRequestDataAlreadyExist('Username'); }
-      return HttpResponse.created({ user });
-    } catch {
-      return HttpResponse.serverError();
-    }
-  }
-}
 
 const makeSut = () => {
   const validator = {
