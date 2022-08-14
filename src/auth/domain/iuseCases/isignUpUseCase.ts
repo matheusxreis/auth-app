@@ -6,7 +6,7 @@ password: string
 }
 
 interface iSignUpUseCaseResponse {
-name: string,
+username: string,
 email: string,
 createdAccountAt: number,
 id: string

@@ -32,7 +32,7 @@ export class SignInUseCase implements iSignInUseCase {
 
     if (!token) { throw new Error(); }
     const user = {
-      username: userData.name,
+      username: userData.username,
       id: userData.id
     };
     return {

@@ -10,7 +10,7 @@ const makeSut = () => {
     getUserByEmail: async () =>
       await new Promise<User|null>((resolve, reject) =>
         resolve({
-          name: 'UserName',
+          username: 'UserName',
           email: 'A valid email',
           id: '92782k2j',
           hashPassword: '162yhj2mk*(72g23232',
@@ -88,7 +88,7 @@ describe('SignInUseCase', () => {
     const result = await sut.execute('valid.email@gmail.com', '123456789');
     const userData = await repository.getUserByEmail() as User;
     const user = {
-      username: userData.name,
+      username: userData.username,
       id: userData.id
     };
 

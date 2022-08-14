@@ -1,9 +1,14 @@
 import { EmptyParamFieldError } from '../../../../src/global/errors/EmptyParamFieldError';
-
+import { User } from '../../../../src/auth/domain/entities/user';
 interface ISignUpExecuteParams {
 username: string,
 password: string,
 email:string
+}
+
+export interface iSignUpRepository {
+getByEmail():Promise<User|null>;
+getByUsername():Promise<User|null>;
 }
 
 export class SignUpUseCase {

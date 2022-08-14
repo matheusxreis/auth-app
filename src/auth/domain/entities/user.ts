@@ -1,5 +1,5 @@
 export type User = {
-name: string,
+username: string,
 email: string,
 hashPassword?: string,
 createdAccountAt: number,
