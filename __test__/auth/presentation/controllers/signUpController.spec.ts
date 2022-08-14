@@ -67,7 +67,7 @@ describe('SignUpController', () => {
     await sut.handle(req);
     expect(validator.isEmailValid).toBeCalledWith(params.email);
   });
-  it('should isPasswordValid method from validator receive right email', async () => {
+  it('should isPasswordValid method from validator receive right password', async () => {
     const { sut, validator } = makeSut();
 
     await sut.handle(req);
