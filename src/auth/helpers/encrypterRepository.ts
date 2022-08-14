@@ -1,4 +1,4 @@
-import { iEncrypterRepository } from '../data/irepositories/iencrypterRepository';
+import { iEncrypterRepository } from '../data/irepositories/iencrypterCompareRepository';
 import bcrypt from 'bcrypt';
 
 export class EncrypterRepository implements iEncrypterRepository {

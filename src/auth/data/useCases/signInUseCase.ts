@@ -1,13 +1,13 @@
 import { iSignInUseCase, ISignInUseCaseReturn } from 'src/auth/domain/iuseCases/isignInUseCase';
 import { EmptyParamFieldError } from '../../../global/errors/EmptyParamFieldError';
 import { InvalidInjectionError } from '../../../global/errors/InvalidInjectionError';
-import { iEncrypterRepository } from '../irepositories/iencrypterRepository';
+import { iEncrypterCompareRepository } from '../irepositories/iencrypterCompareRepository';
 import { iGenerateTokenRepository } from '../irepositories/igenerateTokenRepository';
 import { iGetByEmailRepository } from '../irepositories/igetByEmailRepository';
 
 export class SignInUseCase implements iSignInUseCase {
   constructor (private getByEmailRepository: iGetByEmailRepository,
-              private encrypter: iEncrypterRepository,
+              private encrypter: iEncrypterCompareRepository,
               private generateToken: iGenerateTokenRepository) {}
 
   async execute (email: string, password: string): Promise<ISignInUseCaseReturn|null> {
