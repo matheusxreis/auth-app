@@ -6,7 +6,7 @@ import {
   iSignInUseCase,
   ISignInUseCaseReturn
 } from '../../../../src/auth/domain/iuseCases/isignInUseCase';
-import { Validator } from '../../../../src/global/utils/validator';
+
 // sut = system under test - the system which is being testing
 const makeSut = () => {
   const signInUseCase = {
@@ -19,7 +19,10 @@ const makeSut = () => {
         })
       ).then(x => x)
   };
-  const validator = new Validator();
+  const validator = {
+    isEmailValid: jest.fn().mockImplementation(() => true),
+    isPasswordValid: jest.fn()
+  };
   const failedSignInUseCase = {
     execute: () => {
       throw new Error();
@@ -76,11 +79,23 @@ describe('SignInController', () => {
     expect(response).toEqual(HttpResponse.badRequest('email'));
   });
   it('should return a error 400 if email is not valid', async () => {
-    const { sut } = makeSut();
+    const { signInUseCase } = makeSut();
+    const validator = {
+      isEmailValid: jest.fn().mockImplementation(() => false),
+      isPasswordValid: jest.fn()
+    };
+    const sut = new SignInController(signInUseCase, validator);
     const data = { email: 'invalid_email', password: 'password' };
     const request = new HttpRequest(data);
     const response = await sut.handle(request);
     expect(response).toEqual(HttpResponse.badRequest('email', 'invalid'));
+  });
+  it('should isEmailValid method from validator receive right email', async () => {
+    const { sut, validator } = makeSut();
+    const data = { email: 'email@teste.com.br', password: 'password' };
+    const request = new HttpRequest(data);
+    await sut.handle(request);
+    expect(validator.isEmailValid).toBeCalledWith(data.email);
   });
   it('should return a error 400 if password is empty', async () => {
     const { sut } = makeSut();
