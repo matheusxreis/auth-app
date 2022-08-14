@@ -165,6 +165,18 @@ describe('SignInUseCase', () => {
 
     expect(generateToken.generate).toBeCalledWith(user!.id);
   });
+  it('should not call generateToken generate method if has no user in database with email', async () => {
+    const { encrypter } = makeSut();
+    const generateToken = { generate: jest.fn() };
+    const repository = {
+      getUserByEmail: async () => await new Promise((resolve, reject) => {
+        resolve(null);
+      }).then(x => x)
+    } as iGetByEmailRepository;
+    const useCase = new SignInUseCase(repository, encrypter, generateToken);
+    await useCase.execute('unexisted.email@gmail.com', '12*787&1');
+    expect(generateToken.generate).not.toBeCalled();
+  });
   it('should throw if generateToken not return a access_token', async () => {
     const {
       repository,
@@ -175,5 +187,19 @@ describe('SignInUseCase', () => {
 
     expect(async () => await sut.execute('valid.email@gmail.com', '12347*&6'))
       .rejects.toThrow();
+  });
+  it('should throw if encrypter throws', async () => {
+    const { repository, generateToken } = makeSut();
+    const encrypter = { compare: () => { throw new Error(); } };
+    const sut = new SignInUseCase(repository, encrypter, generateToken);
+
+    expect(async () => await sut.execute('email@right.com.br', '91272872812')).rejects.toThrow();
+  });
+  it('should throw if generateToken throws', async () => {
+    const { repository, encrypter } = makeSut();
+    const generateToken = { generate: () => { throw new Error(); } };
+    const sut = new SignInUseCase(repository, encrypter, generateToken);
+
+    expect(async () => await sut.execute('email@right.com.br', '91272872812')).rejects.toThrow();
   });
 });
