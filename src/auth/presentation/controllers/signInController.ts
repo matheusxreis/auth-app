@@ -1,12 +1,13 @@
 import { iSignInUseCase } from 'src/auth/domain/iuseCases/isignInUseCase';
-import { Validator } from '../../../global/utils/validator';
 import { HttpRequest } from '../../../global/http/entities/httpRequest';
 import { HttpResponse } from '../../../global/http/entities/httpResponse';
 import { isBodyEmpty } from '../../../global/http/helpers/isBodyEmpty';
 import { SignInRequestDTO } from '../dtos/SignInRequestDTO';
+import { iValidator } from '../iutils/ivalidator';
 
 export class SignInController {
-  constructor (private useCase: iSignInUseCase) {}
+  constructor (private useCase: iSignInUseCase,
+            private validator: iValidator) {}
 
   async handle (req: HttpRequest<SignInRequestDTO>): Promise<HttpResponse> {
     const { email, password } = req.body;
@@ -21,7 +22,7 @@ export class SignInController {
       return HttpResponse.badRequest('password');
     }
 
-    if (!Validator.isEmailValid(email)) {
+    if (!this.validator.isEmailValid(email)) {
       return HttpResponse.badRequest('email', 'invalid');
     }
 

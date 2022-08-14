@@ -1,3 +1,4 @@
+import { iValidator } from '../../../../src/auth/presentation/iutils/ivalidator';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
 import { Validator } from '../../../../src/global/utils/validator';
@@ -9,23 +10,28 @@ password:string;
 }
 
 class SignUpController {
+  constructor (
+      private validator: iValidator
+  ) {}
+
   async handle (req: HttpRequest<ISignUpRequestDTO>) {
     const { username, email, password } = req.body;
     if (!email) { return HttpResponse.badRequest('email'); }
     if (!username) { return HttpResponse.badRequest('username'); }
     if (!password) { return HttpResponse.badRequest('password'); }
 
-    const isEmailValid = Validator.isEmailValid(email);
-    const isPasswordValid = Validator.isPasswordValid(password);
+    const isEmailValid = this.validator.isEmailValid(email);
+    const isPasswordValid = this.validator.isPasswordValid(password);
     if (!isEmailValid) { return HttpResponse.badRequest('email', 'invalid'); }
     if (!isPasswordValid) { return HttpResponse.badRequest('password', 'invalid'); }
   }
 }
 
 const makeSut = () => {
-  const sut = new SignUpController();
+  const validator = new Validator();
+  const sut = new SignUpController(validator);
 
-  return { sut };
+  return { sut, validator };
 };
 
 describe('SignUpController', () => {

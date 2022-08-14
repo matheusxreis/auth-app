@@ -6,6 +6,7 @@ import {
   iSignInUseCase,
   ISignInUseCaseReturn
 } from '../../../../src/auth/domain/iuseCases/isignInUseCase';
+import { Validator } from '../../../../src/global/utils/validator';
 // sut = system under test - the system which is being testing
 const makeSut = () => {
   const signInUseCase = {
@@ -18,15 +19,16 @@ const makeSut = () => {
         })
       ).then(x => x)
   };
+  const validator = new Validator();
   const failedSignInUseCase = {
     execute: () => {
       throw new Error();
     }
   };
-  const sut = new SignInController(signInUseCase);
-  const errorSut = new SignInController(failedSignInUseCase);
+  const sut = new SignInController(signInUseCase, validator);
+  const errorSut = new SignInController(failedSignInUseCase, validator);
 
-  return { sut, signInUseCase, errorSut };
+  return { sut, signInUseCase, errorSut, validator };
 };
 
 describe('SignInController', () => {
@@ -41,6 +43,7 @@ describe('SignInController', () => {
     );
   });
   it('should return a signInResponseDTO if all is ok', async () => {
+    const { validator } = makeSut();
     const signInUseCase = {
       execute: async () =>
         new Promise<ISignInUseCaseReturn>((resolve, reject) =>
@@ -51,7 +54,8 @@ describe('SignInController', () => {
           })
         ).then(x => x)
     };
-    const sut = new SignInController(signInUseCase);
+
+    const sut = new SignInController(signInUseCase, validator);
 
     const data = { email: 'email@teste.com.br', password: 'password' };
     const request = new HttpRequest(data);
@@ -98,13 +102,14 @@ describe('SignInController', () => {
     expect(response).toEqual(HttpResponse.serverError());
   });
   it('should return a error 401 in case of use case doesnt return a token', async () => {
+    const { validator } = makeSut();
     const signInUseCase = {
       execute: async () =>
         new Promise<ISignInUseCaseReturn|null>((resolve, reject) =>
           resolve(null)
         ).then(x => x)
     };
-    const sut = new SignInController(signInUseCase);
+    const sut = new SignInController(signInUseCase, validator);
 
     const data = {
       email: 'email@teste.com.br',
@@ -117,8 +122,9 @@ describe('SignInController', () => {
     expect(response).toEqual(HttpResponse.notAuthorized());
   });
   it('should call use case with correctly params', async () => {
+    const { validator } = makeSut();
     const signInUseCase = { execute: jest.fn() };
-    const sut = new SignInController(signInUseCase);
+    const sut = new SignInController(signInUseCase, validator);
 
     const data = {
       email: 'email@teste.com.br',
@@ -145,7 +151,8 @@ describe('SignInController', () => {
   });
   it('should return a error 500 if a use case inject is undefined', async () => {
     const undefinedUseCase = {} as iSignInUseCase;
-    const sut = new SignInController(undefinedUseCase);
+    const { validator } = makeSut();
+    const sut = new SignInController(undefinedUseCase, validator);
 
     const data = {
       email: 'email@teste.com.br',
