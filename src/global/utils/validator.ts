@@ -3,11 +3,11 @@ const emailRegex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+
 const validatorEmail = new RegExp(emailRegex);
 
 export class Validator {
-  static isEmailValid (email: string) {
+  isEmailValid (email: string) {
     return validatorEmail.test(email);
   }
 
-  static isPasswordValid (password: string) {
+  isPasswordValid (password: string) {
     if (password.length > 8) {
       return true;
     }
