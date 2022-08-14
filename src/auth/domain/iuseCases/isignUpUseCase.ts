@@ -1,5 +1,5 @@
 
-interface iSignUpUseCaseParams {
+export interface iSignUpUseCaseParams {
 username: string,
 email: string,
 password: string
