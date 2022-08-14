@@ -1,7 +1,6 @@
 import { iValidator } from '../../../../src/auth/presentation/iutils/ivalidator';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
-import { Validator } from '../../../../src/global/utils/validator';
 
 export interface ISignUpRequestDTO {
 username:string;
@@ -28,7 +27,10 @@ class SignUpController {
 }
 
 const makeSut = () => {
-  const validator = new Validator();
+  const validator = {
+    isEmailValid: jest.fn().mockImplementation(() => true),
+    isPasswordValid: jest.fn().mockImplementation(() => true)
+  };
   const sut = new SignUpController(validator);
 
   return { sut, validator };
@@ -65,8 +67,34 @@ describe('SignUpController', () => {
     const req = new HttpRequest(params);
     expect(await sut.handle(req)).toEqual(HttpResponse.badRequest('password'));
   });
+  it('should isEmailValid method from validator receive right email', async () => {
+    const { sut, validator } = makeSut();
+    const params = {
+      username: 'username',
+      email: 'valid.email@gmail.com',
+      password: '*178267*¨1h1j*'
+    };
+    const req = new HttpRequest(params);
+    await sut.handle(req);
+    expect(validator.isEmailValid).toBeCalledWith(params.email);
+  });
+  it('should isPasswordValid method from validator receive right email', async () => {
+    const { sut, validator } = makeSut();
+    const params = {
+      username: 'username',
+      email: 'valid.email@gmail.com',
+      password: '*178267*¨1h1j*'
+    };
+    const req = new HttpRequest(params);
+    await sut.handle(req);
+    expect(validator.isPasswordValid).toBeCalledWith(params.password);
+  });
   it('should return a 400 if email is invalid', async () => {
-    const { sut } = makeSut();
+    const validator = {
+      isEmailValid: jest.fn().mockImplementation(() => false),
+      isPasswordValid: jest.fn().mockImplementation(() => true)
+    };
+    const sut = new SignUpController(validator);
     const params = {
       username: 'username',
       email: 'invalidemail.com',
@@ -76,7 +104,11 @@ describe('SignUpController', () => {
     expect(await sut.handle(req)).toEqual(HttpResponse.badRequest('email', 'invalid'));
   });
   it('should return a 400 if password is invalid', async () => {
-    const { sut } = makeSut();
+    const validator = {
+      isEmailValid: jest.fn().mockImplementation(() => true),
+      isPasswordValid: jest.fn().mockImplementation(() => false)
+    };
+    const sut = new SignUpController(validator);
     const params = {
       username: 'username',
       email: 'valid.email@gmail.com',
