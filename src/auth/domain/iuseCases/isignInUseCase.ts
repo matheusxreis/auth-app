@@ -7,6 +7,6 @@ user: UserReturnUseCase;
 timestamp: number;
 token: string;
 }
-export interface iSignInUseCase {
+export interface iSignUpUseCase {
 execute(email: string, password: string): Promise<ISignInUseCaseReturn | null>;
 }

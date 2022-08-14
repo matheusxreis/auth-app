@@ -1,3 +1,4 @@
+import { iSignUpUseCase } from '../../../../src/auth/domain/iuseCases/isignInUseCase';
 import { iValidator } from '../../../../src/auth/presentation/iutils/ivalidator';
 import { HttpRequest } from '../../../../src/global/http/entities/httpRequest';
 import { HttpResponse } from '../../../../src/global/http/entities/httpResponse';
@@ -10,6 +11,7 @@ password:string;
 
 class SignUpController {
   constructor (
+      private signUpUseCase: iSignUpUseCase,
       private validator: iValidator
   ) {}
 
@@ -116,5 +118,8 @@ describe('SignUpController', () => {
     };
     const req = new HttpRequest(params);
     expect(await sut.handle(req)).toEqual(HttpResponse.badRequest('password', 'invalid'));
+  });
+  it('should useCase receive right params', async () => {
+
   });
 });

@@ -6,6 +6,6 @@ email: string,
 password: string
 }
 
-export interface iSignUpUseCase {
+export interface iSignInUseCase {
     execute(params: iSignUpUseCaseParams): Promise<User | null>;
 }
