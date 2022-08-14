@@ -147,4 +147,34 @@ describe('SignUpUseCase', () => {
 
     expect(response).toEqual(expectedResponse);
   });
+  it('should throws if getByEmail method of repository throws', async () => {
+    const errorRepository = {
+      signUp: jest.fn(),
+      getByEmail: () => { throw new Error(); },
+      getByUsername: jest.fn()
+    };
+    const sut = new SignUpUseCase(errorRepository);
+
+    expect(async () => await sut.execute(params)).rejects.toThrow();
+  });
+  it('should throws if getByUsername method of repository throws', async () => {
+    const errorRepository = {
+      signUp: jest.fn(),
+      getByEmail: jest.fn(),
+      getByUsername: () => { throw new Error(); }
+    };
+    const sut = new SignUpUseCase(errorRepository);
+
+    expect(async () => await sut.execute(params)).rejects.toThrow();
+  });
+  it('should throws if signUp method of repository throws', async () => {
+    const errorRepository = {
+      signUp: () => { throw new Error(); },
+      getByEmail: jest.fn(),
+      getByUsername: jest.fn()
+    };
+    const sut = new SignUpUseCase(errorRepository);
+
+    expect(async () => await sut.execute(params)).rejects.toThrow();
+  });
 });
