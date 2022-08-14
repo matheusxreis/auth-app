@@ -9,6 +9,7 @@ export class EncrypterRepository implements iEncrypterCompareRepository, iEncryp
   }
 
   async encrypt (password:string): Promise <string> {
+    if (!password) { throw new Error(); }
     return await bcrypt.hash(password, 8);
   }
 }
