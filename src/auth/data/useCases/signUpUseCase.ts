@@ -1,9 +1,11 @@
 import { iSignUpUseCase, iSignUpUseCaseParams } from '../../../auth/domain/iuseCases/isignUpUseCase';
 import { EmptyParamFieldError } from '../../../global/errors/EmptyParamFieldError';
+import { iEncrypterEncryptRepository } from '../irepositories/iencrypterEncryptRepository';
 import { iSignUpRepository } from '../irepositories/isignUpRepository';
 
 export class SignUpUseCase implements iSignUpUseCase {
-  constructor (private repository: iSignUpRepository) {}
+  constructor (private repository: iSignUpRepository,
+    encrypter: iEncrypterEncryptRepository) {}
 
   async execute (params: iSignUpUseCaseParams) {
     if (!params.email) { throw new EmptyParamFieldError('email'); }

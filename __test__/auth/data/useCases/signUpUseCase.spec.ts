@@ -14,9 +14,10 @@ const makeSut = () => {
     signUp: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user)))
 
   };
-  const sut = new SignUpUseCase(repository);
+  const encrypter = { encrypt: jest.fn().mockImplementation(() => '8A2A3BNHA3G7A3GAJ3') };
+  const sut = new SignUpUseCase(repository, encrypter);
 
-  return { sut, repository };
+  return { sut, repository, encrypter };
 };
 
 const params = { username: 'Username', email: 'valid.email@gmail.com', password: '1223h382' };
@@ -51,12 +52,13 @@ describe('SignUpUseCase', () => {
     expect(repository.getByUsername).toBeCalledWith(params.username);
   });
   it('should return that email exist in case of repository getByEmail method returns a user', async () => {
+    const { encrypter } = makeSut();
     const repository = {
       getByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
       getByUsername: jest.fn(),
       signUp: jest.fn()
     };
-    const sut = new SignUpUseCase(repository);
+    const sut = new SignUpUseCase(repository, encrypter);
 
     const response = await sut.execute(params);
 
@@ -64,12 +66,14 @@ describe('SignUpUseCase', () => {
     expect(response.usernameAlreadyExist).toBe(false);
   });
   it('should return that username exist in case of repository getByUsername method returns a user', async () => {
+    const { encrypter } = makeSut();
+
     const repository = {
       getByUsername: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
       getByEmail: jest.fn(),
       signUp: jest.fn()
     };
-    const sut = new SignUpUseCase(repository);
+    const sut = new SignUpUseCase(repository, encrypter);
 
     const response = await sut.execute(params);
 
@@ -101,32 +105,38 @@ describe('SignUpUseCase', () => {
     expect(response).toEqual(expectedResponse);
   });
   it('should throws if getByEmail method of repository throws', async () => {
+    const { encrypter } = makeSut();
+
     const errorRepository = {
       signUp: jest.fn(),
       getByEmail: () => { throw new Error(); },
       getByUsername: jest.fn()
     };
-    const sut = new SignUpUseCase(errorRepository);
+    const sut = new SignUpUseCase(errorRepository, encrypter);
 
     expect(async () => await sut.execute(params)).rejects.toThrow();
   });
   it('should throws if getByUsername method of repository throws', async () => {
+    const { encrypter } = makeSut();
+
     const errorRepository = {
       signUp: jest.fn(),
       getByEmail: jest.fn(),
       getByUsername: () => { throw new Error(); }
     };
-    const sut = new SignUpUseCase(errorRepository);
+    const sut = new SignUpUseCase(errorRepository, encrypter);
 
     expect(async () => await sut.execute(params)).rejects.toThrow();
   });
   it('should throws if signUp method of repository throws', async () => {
+    const { encrypter } = makeSut();
+
     const errorRepository = {
       signUp: () => { throw new Error(); },
       getByEmail: jest.fn(),
       getByUsername: jest.fn()
     };
-    const sut = new SignUpUseCase(errorRepository);
+    const sut = new SignUpUseCase(errorRepository, encrypter);
 
     expect(async () => await sut.execute(params)).rejects.toThrow();
   });
