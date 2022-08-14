@@ -1,52 +1,5 @@
 import { EmptyParamFieldError } from '../../../../src/global/errors/EmptyParamFieldError';
-import { User } from '../../../../src/auth/domain/entities/user';
-import { iSignUpUseCase, iSignUpUseCaseParams } from '../../../../src/auth/domain/iuseCases/isignUpUseCase';
-
-export interface iSignUpMethodRepository {
-username:string;
-email:string;
-password:string
-}
-
-export interface iSignUpRepository {
-getByEmail(email:string):Promise<User|null>;
-getByUsername(username:string):Promise<User|null>;
-signUp(params: iSignUpMethodRepository): Promise<User>
-}
-
-export class SignUpUseCase implements iSignUpUseCase {
-  constructor (private repository: iSignUpRepository) {}
-  async execute (params: iSignUpUseCaseParams) {
-    if (!params.email) { throw new EmptyParamFieldError('email'); }
-    if (!params.password) { throw new EmptyParamFieldError('password'); }
-    if (!params.username) { throw new EmptyParamFieldError('username'); }
-
-    const emailAlreadyExist = await this.repository.getByEmail(params.email);
-    const usernameAlreadyExist = await this.repository.getByUsername(params.username);
-
-    if (emailAlreadyExist || usernameAlreadyExist) {
-      return {
-        username: '',
-        email: '',
-        id: '',
-        createdAccountAt: 2938239,
-        emailAlreadyExist: !!emailAlreadyExist,
-        usernameAlreadyExist: !!usernameAlreadyExist
-      };
-    }
-
-    const userRegistered = await this.repository.signUp(params);
-
-    return {
-      username: userRegistered.username,
-      email: userRegistered.email,
-      id: userRegistered.id,
-      createdAccountAt: userRegistered.createdAccountAt,
-      emailAlreadyExist: !!emailAlreadyExist,
-      usernameAlreadyExist: !!usernameAlreadyExist
-    };
-  }
-}
+import { SignUpUseCase } from '../../../../src/auth/data/useCases/signUpUseCase';
 
 const user = {
   username: 'c4ct0',

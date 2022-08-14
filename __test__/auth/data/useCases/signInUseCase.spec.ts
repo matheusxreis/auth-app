@@ -3,7 +3,7 @@ import { InvalidInjectionError } from '../../../../src/global/errors/InvalidInje
 import { iGetByEmailRepository } from '../../../../src/auth/data/irepositories/igetByEmailRepository';
 import { SignInUseCase } from '../../../../src/auth/data/useCases/signInUseCase';
 import { User } from '../../../../src/auth/domain/entities/user';
-import { iEncrypterRepository } from '../../../../src/auth/data/irepositories/iencrypterRepository';
+import { iEncrypterCompareRepository } from '../../../../src/auth/data/irepositories/iencrypterCompareRepository';
 
 const makeSut = () => {
   const repository = {
@@ -148,7 +148,7 @@ describe('SignInUseCase', () => {
       compare: async () => new Promise((resolve, reject) =>
         resolve(null))
         .then(x => x)
-    } as iEncrypterRepository;
+    } as iEncrypterCompareRepository;
     const sut = new SignInUseCase(repository, encrypter, generateToken);
 
     const returnSut = await sut.execute('valid_email@gmail.com', '1234567*');
