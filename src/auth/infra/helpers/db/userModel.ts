@@ -6,4 +6,4 @@ const UserSchema = new Schema({
   email: String,
   createdAccountAt: Number
 });
-export const UserModel = mongoose.model('User', UserSchema);
+export const UserModel = mongoose.model('Users', UserSchema);

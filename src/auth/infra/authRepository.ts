@@ -2,6 +2,7 @@ import { iGetByEmailRepository } from '../data/irepositories/igetByEmailReposito
 import { User } from '../domain/entities/user';
 import { Model } from 'mongoose';
 import { iSignUpMethodRepository, iSignUpRepository } from '../data/irepositories/isignUpRepository';
+import { EmptyParamFieldError } from '../../global/errors/EmptyParamFieldError';
 
 export class AuthRepository implements iGetByEmailRepository, iSignUpRepository {
   constructor (private Model: Model<any>) {}
@@ -19,7 +20,9 @@ export class AuthRepository implements iGetByEmailRepository, iSignUpRepository 
   }
 
   async getUserByEmail (email: string): Promise<User | null> {
+    if (!email) { throw new EmptyParamFieldError('email'); }
     const user = await this.Model.findOne({ email });
+
     return user as User;
   }
 }
