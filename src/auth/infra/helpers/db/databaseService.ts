@@ -2,11 +2,8 @@ import mongoose from 'mongoose';
 
 export class DatabaseService {
   static async init () {
-    try {
-      await mongoose.connect('');
-      console.log('[DATABASE] Connection was a success!');
-    } catch (err) {
-      console.log('[DATABASE] Something was wrong', err);
-    }
+    mongoose.connect(`${process.env.MONGO_URL}`)
+      .then(() => console.log('[DATABASE] - Connected!'))
+      .catch((err) => { throw new Error(err); });
   }
 }

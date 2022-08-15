@@ -1,11 +1,19 @@
 import { config as loadEnvVariables } from 'dotenv';
+import { DatabaseService } from './auth/infra/helpers/db/databaseService';
 import { createServer } from './createServer';
+
+loadEnvVariables();
 
 function initServer () {
   const api = createServer();
-  api.listen(3333, () => {
-    console.log('The server is running on port 3333...');
+  api.listen(process.env.PORT, () => {
+    console.log(`The server is running on port ${process.env.PORT}...`);
   });
 }
-loadEnvVariables();
-initServer();
+
+async function initServices () {
+  initServer();
+  await DatabaseService.init();
+}
+
+initServices();
