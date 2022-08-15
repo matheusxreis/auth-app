@@ -1,24 +1,7 @@
 import { iGetByEmailRepository } from '../data/irepositories/igetByEmailRepository';
 import { User } from '../domain/entities/user';
-import mongoose, { Model, Schema } from 'mongoose';
+import { Model } from 'mongoose';
 import { iSignUpMethodRepository, iSignUpRepository } from '../data/irepositories/isignUpRepository';
-
-export class DatabaseService {
-  static async init () {
-    try {
-      await mongoose.connect('');
-      console.log('[DATABASE]Connection was a success!');
-    } catch {}
-  }
-}
-
-const UserSchema = new Schema({
-  username: String,
-  hashPassword: String,
-  email: String,
-  createdAccountAt: Number
-});
-export const UserModel = mongoose.model('User', UserSchema);
 
 export class AuthRepository implements iGetByEmailRepository, iSignUpRepository {
   constructor (private Model: Model<any>) {}
