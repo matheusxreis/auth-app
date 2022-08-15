@@ -12,7 +12,7 @@ const makeSut = () => {
         resolve({
           username: 'UserName',
           email: 'A valid email',
-          id: '92782k2j',
+          _id: '92782k2j',
           hashPassword: '162yhj2mk*(72g23232',
           createdAccountAt: 12729272828
         })
@@ -89,7 +89,7 @@ describe('SignInUseCase', () => {
     const userData = await repository.getUserByEmail() as User;
     const user = {
       username: userData.username,
-      id: userData.id
+      _id: userData._id
     };
 
     const token = await generateToken.generate();
@@ -163,7 +163,7 @@ describe('SignInUseCase', () => {
     await sut.execute('valid.email@gmail.com', '1234*71571');
     const user = await repository.getUserByEmail();
 
-    expect(generateToken.generate).toBeCalledWith(user!.id);
+    expect(generateToken.generate).toBeCalledWith(user!._id);
   });
   it('should not call generateToken generate method if has no user in database with email', async () => {
     const { encrypter } = makeSut();

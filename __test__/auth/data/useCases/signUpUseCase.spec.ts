@@ -5,7 +5,7 @@ const user = {
   username: 'c4ct0',
   email: 'matheus.reis@gmai.com',
   createdAccountAt: 12334303890383,
-  id: '8ah3ah73a283h38'
+  _id: '8ah3ah73a283h38'
 };
 const makeSut = () => {
   const repository = {
@@ -101,7 +101,7 @@ describe('SignUpUseCase', () => {
     const expectedResponse = {
       username: userRegistered.username,
       email: userRegistered.email,
-      id: userRegistered.id,
+      _id: userRegistered._id,
       createdAccountAt: userRegistered.createdAccountAt,
       emailAlreadyExist: false,
       usernameAlreadyExist: false

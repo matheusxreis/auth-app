@@ -19,7 +19,7 @@ export class SignUpUseCase implements iSignUpUseCase {
       return {
         username: '',
         email: '',
-        id: '',
+        _id: '',
         createdAccountAt: 2938239,
         emailAlreadyExist: !!emailAlreadyExist,
         usernameAlreadyExist: !!usernameAlreadyExist
@@ -37,7 +37,7 @@ export class SignUpUseCase implements iSignUpUseCase {
     return {
       username: userRegistered.username,
       email: userRegistered.email,
-      id: userRegistered.id,
+      _id: userRegistered._id,
       createdAccountAt: userRegistered.createdAccountAt,
       emailAlreadyExist: !!emailAlreadyExist,
       usernameAlreadyExist: !!usernameAlreadyExist

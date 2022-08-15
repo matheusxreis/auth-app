@@ -119,7 +119,7 @@ describe('SignUpController', () => {
 
     const newUser = {
       username: user.username,
-      id: user.id,
+      _id: user._id,
       email: user.email
     };
     expect(response).toEqual(HttpResponse.created({ user: newUser }));

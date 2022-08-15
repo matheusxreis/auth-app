@@ -9,7 +9,7 @@ interface iSignUpUseCaseResponse {
 username: string,
 email: string,
 createdAccountAt: number,
-id: string
+_id: string
 emailAlreadyExist: boolean,
 usernameAlreadyExist: boolean
 }

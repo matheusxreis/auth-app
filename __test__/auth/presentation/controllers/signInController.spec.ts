@@ -13,7 +13,7 @@ const makeSut = () => {
     execute: async () =>
       new Promise<ISignInUseCaseReturn>((resolve, reject) =>
         resolve({
-          user: { username: 'username', id: 'id' },
+          user: { username: 'username', _id: 'id' },
           timestamp: 12334,
           token: 'access_token_jwt'
         })
@@ -51,7 +51,7 @@ describe('SignInController', () => {
       execute: async () =>
         new Promise<ISignInUseCaseReturn>((resolve, reject) =>
           resolve({
-            user: { username: 'username', id: 'id' },
+            user: { username: 'username', _id: 'id' },
             timestamp: 12334,
             token: 'access_token_jwt'
           })

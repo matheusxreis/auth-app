@@ -28,12 +28,12 @@ export class SignInUseCase implements iSignInUseCase {
     const isPasswordRight = await this.encrypter.compare(password, String(userData?.hashPassword));
     if (!isPasswordRight) { return null; }
 
-    const token = await this.generateToken.generate(userData.id);
+    const token = await this.generateToken.generate(userData._id);
 
     if (!token) { throw new Error(); }
     const user = {
       username: userData.username,
-      id: userData.id
+      _id: userData._id
     };
     return {
       user,

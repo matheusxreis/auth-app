@@ -27,7 +27,7 @@ export class SignUpController {
       if (user.usernameAlreadyExist) { return HttpResponse.badRequestDataAlreadyExist('Username'); }
       const newUser = {
         username: user.username,
-        id: user.id,
+        id: user._id,
         email: user.email
       };
       return HttpResponse.created({ user: newUser });

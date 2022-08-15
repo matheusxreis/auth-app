@@ -1,6 +1,6 @@
 interface UserReturnUseCase {
 username: string;
-id: string;
+_id: string;
 }
 export interface ISignInUseCaseReturn {
 user: UserReturnUseCase;
