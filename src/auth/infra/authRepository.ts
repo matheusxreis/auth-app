@@ -18,7 +18,7 @@ const UserSchema = new Schema({
   email: String,
   createdAccountAt: Number
 });
-// const UserModel = mongoose.model('User', UserSchema);
+export const UserModel = mongoose.model('User', UserSchema);
 
 export class AuthRepository implements iGetByEmailRepository, iSignUpRepository {
   constructor (private Model: Model<any>) {}
