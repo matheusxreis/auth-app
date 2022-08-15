@@ -20,14 +20,15 @@ const saveUser = async () => {
   }).save();
 };
 
-const deleteUser = async (key:string, value:string) => {
-  return UserModel.findOneAndDelete({ [key]: value });
+const deleteUser = async () => {
+  return UserModel.deleteMany();
 };
 
 beforeEach(async () => {
   await mongoose.connect(`${process.env.MONGO_URL}`)
     .then(() => console.log('CONNECTED', process.env.MONGO_URL))
     .catch((err) => { throw new Error(err); });
+  await deleteUser();
 });
 
 afterEach(async () => {
@@ -54,6 +55,5 @@ describe('authRepository', () => {
     const user: User | null = await sut.getUserByEmail(email);
     expect(user?.email).toBe(email);
     expect(user).not.toBeNull();
-    await deleteUser('email', 'valid.email@email.com');
   });
 });
