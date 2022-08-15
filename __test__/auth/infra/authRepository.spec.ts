@@ -43,17 +43,39 @@ describe('authRepository', () => {
       async () => await sut.getUserByEmail('')
     ).rejects.toThrow(new EmptyParamFieldError('email'));
   });
-  it('should return a null if a not existence email is passed', async () => {
+  it('should return null if a not existence email is passed', async () => {
     const { sut } = makeSut();
     const x = await sut.getUserByEmail('notexistenceemail@email.com');
     expect(x).toBeNull();
   });
-  it('should return a user if a email existence is passed', async () => {
+  it('should return a user if a existence email is passed', async () => {
     const { sut } = makeSut();
     await saveUser();
     const email = 'valid.email@email.com';
     const user: User | null = await sut.getUserByEmail(email);
     expect(user?.email).toBe(email);
+    expect(user).not.toBeNull();
+  });
+  it('should throw if getUserByUsername param is empty', async () => {
+    const { sut } = makeSut();
+
+    expect(
+      async () => await sut.getUserByUsername('')
+    ).rejects.toThrow(new EmptyParamFieldError('username'));
+  });
+  it('should return null if a not existence username is passed', async () => {
+    const { sut } = makeSut();
+    await saveUser();
+    const username = 'notexistenceusername';
+    const user: User | null = await sut.getUserByEmail(username);
+    expect(user).toBeNull();
+  });
+  it('should return a user if a username existence is passed', async () => {
+    const { sut } = makeSut();
+    await saveUser();
+    const username = 'test-man';
+    const user: User | null = await sut.getUserByUsername(username);
+    expect(user?.username).toBe(username);
     expect(user).not.toBeNull();
   });
 });

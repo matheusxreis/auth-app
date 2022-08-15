@@ -8,7 +8,15 @@ export class AuthRepository implements iGetByEmailRepository, iSignUpRepository 
   constructor (private Model: Model<any>) {}
 
   async getUserByUsername (username: string): Promise<User | null> {
+    if (!username) { throw new EmptyParamFieldError('username'); }
     const user = await this.Model.findOne({ username });
+    return user as User;
+  }
+
+  async getUserByEmail (email: string): Promise<User | null> {
+    if (!email) { throw new EmptyParamFieldError('email'); }
+    const user = await this.Model.findOne({ email });
+
     return user as User;
   }
 
@@ -17,12 +25,5 @@ export class AuthRepository implements iGetByEmailRepository, iSignUpRepository 
       .save();
 
     return newUser;
-  }
-
-  async getUserByEmail (email: string): Promise<User | null> {
-    if (!email) { throw new EmptyParamFieldError('email'); }
-    const user = await this.Model.findOne({ email });
-
-    return user as User;
   }
 }
