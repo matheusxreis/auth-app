@@ -6,7 +6,7 @@ export interface iSignUpMethodRepository {
     password:string
     }
 export interface iSignUpRepository {
-    getByEmail(email:string):Promise<User|null>;
-    getByUsername(username:string):Promise<User|null>;
+    getUserByEmail(email:string):Promise<User|null>;
+    getUserByUsername(username:string):Promise<User|null>;
     signUp(params: iSignUpMethodRepository): Promise<User>
 }

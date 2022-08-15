@@ -12,8 +12,8 @@ export class SignUpUseCase implements iSignUpUseCase {
     if (!params.password) { throw new EmptyParamFieldError('password'); }
     if (!params.username) { throw new EmptyParamFieldError('username'); }
 
-    const emailAlreadyExist = await this.repository.getByEmail(params.email);
-    const usernameAlreadyExist = await this.repository.getByUsername(params.username);
+    const emailAlreadyExist = await this.repository.getUserByEmail(params.email);
+    const usernameAlreadyExist = await this.repository.getUserByUsername(params.username);
 
     if (emailAlreadyExist || usernameAlreadyExist) {
       return {

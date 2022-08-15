@@ -9,8 +9,8 @@ const user = {
 };
 const makeSut = () => {
   const repository = {
-    getByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(null))),
-    getByUsername: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(null))),
+    getUserByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(null))),
+    getUserByUsername: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(null))),
     signUp: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user)))
 
   };
@@ -42,20 +42,20 @@ describe('SignUpUseCase', () => {
 
     await sut.execute(params);
 
-    expect(repository.getByEmail).toBeCalledWith(params.email);
+    expect(repository.getUserByEmail).toBeCalledWith(params.email);
   });
   it('should getByUsername method of repository receive right email', async () => {
     const { sut, repository } = makeSut();
 
     await sut.execute(params);
 
-    expect(repository.getByUsername).toBeCalledWith(params.username);
+    expect(repository.getUserByUsername).toBeCalledWith(params.username);
   });
   it('should return that email exist in case of repository getByEmail method returns a user', async () => {
     const { encrypter } = makeSut();
     const repository = {
-      getByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
-      getByUsername: jest.fn(),
+      getUserByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
+      getUserByUsername: jest.fn(),
       signUp: jest.fn()
     };
     const sut = new SignUpUseCase(repository, encrypter);
@@ -69,8 +69,8 @@ describe('SignUpUseCase', () => {
     const { encrypter } = makeSut();
 
     const repository = {
-      getByUsername: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
-      getByEmail: jest.fn(),
+      getUserByUsername: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
+      getUserByEmail: jest.fn(),
       signUp: jest.fn()
     };
     const sut = new SignUpUseCase(repository, encrypter);
@@ -114,8 +114,8 @@ describe('SignUpUseCase', () => {
 
     const errorRepository = {
       signUp: jest.fn(),
-      getByEmail: () => { throw new Error(); },
-      getByUsername: jest.fn()
+      getUserByEmail: () => { throw new Error(); },
+      getUserByUsername: jest.fn()
     };
     const sut = new SignUpUseCase(errorRepository, encrypter);
 
@@ -126,8 +126,8 @@ describe('SignUpUseCase', () => {
 
     const errorRepository = {
       signUp: jest.fn(),
-      getByEmail: jest.fn(),
-      getByUsername: () => { throw new Error(); }
+      getUserByEmail: jest.fn(),
+      getUserByUsername: () => { throw new Error(); }
     };
     const sut = new SignUpUseCase(errorRepository, encrypter);
 
@@ -138,8 +138,8 @@ describe('SignUpUseCase', () => {
 
     const errorRepository = {
       signUp: () => { throw new Error(); },
-      getByEmail: jest.fn(),
-      getByUsername: jest.fn()
+      getUserByEmail: jest.fn(),
+      getUserByUsername: jest.fn()
     };
     const sut = new SignUpUseCase(errorRepository, encrypter);
 
@@ -148,8 +148,8 @@ describe('SignUpUseCase', () => {
   it('should not call signUp method  of repository if user exist', async () => {
     const { encrypter } = makeSut();
     const repository = {
-      getByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
-      getByUsername: jest.fn(),
+      getUserByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
+      getUserByUsername: jest.fn(),
       signUp: jest.fn()
     };
     const sut = new SignUpUseCase(repository, encrypter);
@@ -175,8 +175,8 @@ describe('SignUpUseCase', () => {
   it('should not call encrypter method if user exist', async () => {
     const { encrypter } = makeSut();
     const repository = {
-      getByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
-      getByUsername: jest.fn(),
+      getUserByEmail: jest.fn().mockImplementation(async () => await new Promise((resolve, reject) => resolve(user))),
+      getUserByUsername: jest.fn(),
       signUp: jest.fn()
     };
     const sut = new SignUpUseCase(repository, encrypter);
