@@ -3,7 +3,7 @@ import { User } from 'src/auth/domain/entities/user';
 export interface iSignUpMethodRepository {
     username:string;
     email:string;
-    password:string
+    hashPassword:string
     }
 export interface iSignUpRepository {
     getUserByEmail(email:string):Promise<User|null>;

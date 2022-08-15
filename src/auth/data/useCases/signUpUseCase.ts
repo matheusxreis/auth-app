@@ -28,8 +28,9 @@ export class SignUpUseCase implements iSignUpUseCase {
 
     const hashPassword = await this.encrypter.encrypt(params.password);
     const rightParamsToRegister = {
-      ...params,
-      password: hashPassword
+      username: params.username,
+      email: params.email,
+      hashPassword
     };
 
     const userRegistered = await this.repository.signUp(rightParamsToRegister);

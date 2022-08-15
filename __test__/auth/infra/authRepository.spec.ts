@@ -78,4 +78,52 @@ describe('authRepository', () => {
     expect(user?.username).toBe(username);
     expect(user).not.toBeNull();
   });
+  it('should throw if email is empty in signUp method', async () => {
+    const { sut } = makeSut();
+    const params = {
+      email: '',
+      username: 'anyusername',
+      hashPassword: 'anypasswordf1209238'
+    };
+    expect(
+      async () => await sut.signUp(params)
+    ).rejects.toThrow(new EmptyParamFieldError('email'));
+  });
+  it('should throw if username is empty in signUp method', async () => {
+    const { sut } = makeSut();
+    const params = {
+      email: 'anyemail@gmail.com',
+      username: '',
+      hashPassword: 'anypasswordf1209238'
+    };
+    expect(
+      async () => await sut.signUp(params)
+    ).rejects.toThrow(new EmptyParamFieldError('username'));
+  });
+  it('should throw if hashPassword is empty in signUp method', async () => {
+    const { sut } = makeSut();
+    const params = {
+      email: 'anyemail@gmail.com',
+      username: 'anyusername',
+      hashPassword: ''
+    };
+    expect(
+      async () => await sut.signUp(params)
+    ).rejects.toThrow(new EmptyParamFieldError('hashPassword'));
+  });
+  it('should save new user in database if all is ok', async () => {
+    const { sut } = makeSut();
+    const params = {
+      email: 'any.email@email.com',
+      username: 'anyusername',
+      hashPassword: 'anypassword'
+    };
+
+    await sut.signUp(params);
+    const newUserByEmail = await sut.getUserByEmail(params.email);
+    const newUserByUsername = await sut.getUserByEmail(params.email);
+
+    expect(newUserByEmail?.username).toBe(params.username);
+    expect(newUserByUsername?.email).toBe(params.email);
+  });
 });

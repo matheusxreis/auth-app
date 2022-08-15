@@ -86,8 +86,9 @@ describe('SignUpUseCase', () => {
     await sut.execute(params);
 
     const receivedParams = {
-      ...params,
-      password: encrypter.encrypt()
+      username: params.username,
+      email: params.email,
+      hashPassword: encrypter.encrypt()
     };
 
     expect(repository.signUp).toBeCalledWith(receivedParams);

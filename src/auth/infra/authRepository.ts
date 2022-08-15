@@ -21,6 +21,10 @@ export class AuthRepository implements iGetByEmailRepository, iSignUpRepository 
   }
 
   async signUp (params: iSignUpMethodRepository): Promise<User> {
+    if (!params.email) { throw new EmptyParamFieldError('email'); };
+    if (!params.hashPassword) { throw new EmptyParamFieldError('hashPassword'); };
+    if (!params.username) { throw new EmptyParamFieldError('username'); };
+
     const newUser = new this.Model({ ...params, createdAccountAt: new Date().getTime() })
       .save();
 
