@@ -1,3 +1,4 @@
+import { config as loadEnvVariables } from 'dotenv';
 import { createServer } from './createServer';
 
 function initServer () {
@@ -6,5 +7,5 @@ function initServer () {
     console.log('The server is running on port 3333...');
   });
 }
-
+loadEnvVariables();
 initServer();
